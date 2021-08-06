@@ -613,7 +613,7 @@ html li {
     flex: 1 1 auto;
     margin-bottom: 5rem;
     max-height: calc(100vh - 142px);
-    overflow-y: hidden;
+    overflow-y: scroll;
 }
 
 ._syllabus--container--30zm9 {
