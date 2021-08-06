@@ -1,4 +1,4 @@
-import { AppBar, makeStyles, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 
 
 import Sidebar from '../Sidebar';
@@ -70,7 +70,7 @@ const closeNav = ()=>{
               : "ureact-app__nav primary-and-secondary"
           }
         >
-          <a className="nav__a11y-link" href="#">
+          <a className="nav__a11y-link" href="/">
             Jump to content
           </a>
           <a
@@ -93,7 +93,7 @@ const closeNav = ()=>{
                   <div className="_nav--nav-group-with-sidebar--2eeny">
                     <ul className="nav-group">
                       <li className="nav-item">
-                        <a href="#" title="Home">
+                        <a href="/" title="Home">
                           <span className="nav-item-icon-container">
                             <span className="nav-item-icon">
                               <i
@@ -112,7 +112,7 @@ const closeNav = ()=>{
                         </a>
                       </li>
                       <li className="nav-item _nav--help--1_fHw _nav--inactive--2UbLW">
-                        <a href="#" title="Help">
+                        <a href="/" title="Help">
                           <span className="nav-item-icon-container">
                             <span className="nav-item-icon">
                               <div className="_nav--unread-badge-container--11uuK">
@@ -144,7 +144,7 @@ const closeNav = ()=>{
                         </a>
                       </li>
                       {/* <li className="nav-item">
-                        <a href="#" title="Transcript">
+                        <a href="/" title="Transcript">
                           <span className="nav-item-icon-container">
                             <span className="nav-item-icon">
                               <i
@@ -168,7 +168,7 @@ const closeNav = ()=>{
                   <div className="_nav--nav-group-with-sidebar--2eeny">
                     <ul className="nav-group">
                       <li className="nav-item">
-                        <a href="#" title="Settings">
+                        <a href="/" title="Settings">
                           <span className="nav-item-icon-container">
                             <span className="nav-item-icon">
                               <i
@@ -187,7 +187,7 @@ const closeNav = ()=>{
                         </a>
                       </li>
                       <li className="nav-item">
-                        <a href="#" title="Logout">
+                        <a href="/" title="Logout">
                           <span className="nav-item-icon-container">
                             <span className="nav-item-icon">
                               <i
@@ -301,7 +301,7 @@ const closeNav = ()=>{
                 </div>
                 <a
                   className="footer-link--footer-link--3EuAW"
-                  href="#"
+                  href="/"
                 >
                   <div className="footer-link--contents--1AXQE shared--outer-container--3eppq">
                     {/* <div className="footer-link--text--1vhx_">
