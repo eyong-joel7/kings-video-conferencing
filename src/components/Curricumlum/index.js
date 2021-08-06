@@ -7,7 +7,7 @@ import React, { useContext, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 
 import './curriculumElements.css';
-import { coursesData as curriculum } from './data';
+
 import VideoPlayer from '../VideoPlayer';
 import MainControls from '../MainControls';
 import { SocketContext } from '../../Context';
@@ -42,10 +42,6 @@ const Curriculum = () => {
   const { callAccepted, callEnded } = useContext(SocketContext);
   const [isToggled, setIsToggled] = useState(false);
 
-  const [courseIndex, setCourseIndex] = useState(0);
-  const [selectedIndex, setSelectedIndex] = useState(
-    curriculum[0]._courseTitle,
-  );
 
  
   const hiddenClass = useMediaQuery({
