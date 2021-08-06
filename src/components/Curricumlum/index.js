@@ -248,9 +248,9 @@ const closeNav = ()=>{
                       <h1>
                       KINGS' ROOM
                       </h1>
-                      <p className="_header-content--part-type--1Fn_- shared--label-regular--31PUI shared--context-label--1Ij2n">
+                      {/* <p className="_header-content--part-type--1Fn_- shared--label-regular--31PUI shared--context-label--1Ij2n">
                         Core Curriculum
-                      </p>
+                      </p> */}
                     </div>
                   </div>
                 </div>
@@ -271,9 +271,9 @@ const closeNav = ()=>{
                         <h1>
                         KINGS' ROOM
                         </h1>
-                        <p className="_header-content--part-type--1Fn_- shared--label-regular--31PUI shared--context-label--1Ij2n">
+                        {/* <p className="_header-content--part-type--1Fn_- shared--label-regular--31PUI shared--context-label--1Ij2n">
                           Core Curriculum
-                        </p>
+                        </p> */}
                       </div>
                     </div>
                   </div>
