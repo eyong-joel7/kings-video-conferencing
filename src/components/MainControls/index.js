@@ -5,26 +5,31 @@ import { SocketContext } from '../../Context';
 import './style.css';
 
 const MainControls = ()=>{
-    const {callAccepted, leaveCall,playStop, muteUnmute, main__mute_button, main__video_button} = useContext(SocketContext);
+    const {callAccepted, leaveCall,playStop, muteUnmute, main__mute_button, main__video_button, stream} = useContext(SocketContext);
     const isMobile = useMediaQuery({
         query: "(max-device-width: 480px)",
       });
     
     return (
         <div class="main__controls">
-            <div class="main__controls__block">
-               <div ref = {main__mute_button} onClick={muteUnmute} class="main__controls__button main__mute_button">
-                  <i class="fas fa-microphone"></i>
-                  <span>Mute</span> 
-                  {/* let this be dynamic */}
-               </div>
-               <div ref = {main__video_button} onClick={playStop} class="main__controls__button main__video_button" >
-                  <i class="fas fa-video"></i>
-                  <span>Stop Video</span>
-                  {/* make this dynamic */}
-               </div>
-            </div>
-            
+           {
+               stream && (
+                <div class="main__controls__block">
+                <div ref = {main__mute_button} onClick={muteUnmute} class="main__controls__button main__mute_button">
+                   <i class="fas fa-microphone"></i>
+                   <span>Mute</span> 
+           
+                </div>
+                <div ref = {main__video_button} onClick={playStop} class="main__controls__button main__video_button" >
+                   <i class="fas fa-video"></i>
+                   <span>Stop Video</span>
+               
+                </div>
+             </div>
+             
+               )
+           }
+           
             <div class="main__controls__block">
             {
                    !isMobile && <div class="main__controls__button">

@@ -286,7 +286,7 @@ const closeNav = ()=>{
                     <VideoPlayer />
                     {
                       (!callAccepted || callEnded) &&  <Sidebar>
-                      <Notifications />
+                      <Notifications show = {true} />
                     </Sidebar>
                     }
                    
