@@ -39,9 +39,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 const Curriculum = () => {
   const classes = useStyles();
-  const { callAccepted, callEnded } = useContext(SocketContext);
+  const {callAccepted, callEnded } = useContext(SocketContext);
   const [isToggled, setIsToggled] = useState(false);
-
 
  
   const hiddenClass = useMediaQuery({
@@ -295,9 +294,9 @@ const closeNav = ()=>{
 
                   {/* put main video here */}
                 </div>
-                <a
+                <span
                   className="footer-link--footer-link--3EuAW"
-                  href="/"
+             
                 >
                   <div className="footer-link--contents--1AXQE shared--outer-container--3eppq">
                     {/* <div className="footer-link--text--1vhx_">
@@ -319,7 +318,7 @@ const closeNav = ()=>{
                 */}
                 <MainControls/>
                   </div>
-                </a>
+                </span>
               </div>
             </div>
           </div>{" "}

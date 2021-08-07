@@ -18,6 +18,8 @@ const ContextProvider = ({ children }) => {
   const myVideo = useRef();
   const userVideo = useRef();
   const connectionRef = useRef();
+  const main__mute_button = useRef();
+  const main__video_button = useRef();
 
   useEffect(() => {
     const getUserMedia = async () => {
@@ -84,11 +86,64 @@ const ContextProvider = ({ children }) => {
 
   const leaveCall = () => {
     setCallEnded(true);
-
     connectionRef.current.destroy();
 
     window.location.reload();
   };
+  const muteUnmute = () => {
+    const enabled = stream.getAudioTracks()[0].enabled;
+    if (enabled) {
+      stream.getAudioTracks()[0].enabled = false;
+      setUnmuteButton();
+    } else {
+      setMuteButton();
+      stream.getAudioTracks()[0].enabled = true;
+    }
+  }
+  
+  const playStop = () => {
+
+    let enabled = stream.getVideoTracks()[0].enabled;
+    if (enabled) {
+      stream.getVideoTracks()[0].enabled = false;
+      setPlayVideo()
+    } else {
+      setStopVideo()
+      stream.getVideoTracks()[0].enabled = true;
+    }
+  }
+  
+  const setMuteButton = () => {
+    const html = `
+      <i class="fas fa-microphone"></i>
+      <span>Mute</span>
+    `
+    main__mute_button.current.innerHTML = html;
+  }
+  
+  const setUnmuteButton = () => {
+    const html = `
+      <i class="unmute fas fa-microphone-slash"></i>
+      <span>Unmute</span>
+    `
+    main__mute_button.current.innerHTML = html;
+  }
+  
+  const setStopVideo = () => {
+    const html = `
+      <i class="fas fa-video"></i>
+      <span>Stop Video</span>
+    `
+    main__video_button.current.innerHTML = html;
+  }
+  
+  const setPlayVideo = () => {
+    const html = `
+    <i class="stop fas fa-video-slash"></i>
+      <span>Play Video</span>
+    `
+    main__video_button.current.innerHTML = html;
+  }
 
   return (
     <SocketContext.Provider value={{
@@ -104,6 +159,10 @@ const ContextProvider = ({ children }) => {
       callUser,
       leaveCall,
       answerCall,
+      playStop,
+      muteUnmute,
+      main__mute_button,
+      main__video_button
     }}
     >
       {children}
