@@ -10,7 +10,6 @@ import './ContainerElements.css';
 import { HomeScreen } from '../Home';
 import JoinAMeeting from '../Join';
 import StartAMeeting from '../Host';
-import { Link } from 'react-router-dom';
 import ProfileScreen from '../ProfileScreen';
 
 const useStyles = makeStyles((theme) => ({
