@@ -1,16 +1,17 @@
-import { makeStyles } from '@material-ui/core';
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import { Avatar, makeStyles } from '@material-ui/core';
 
 
-import Sidebar from '../Sidebar';
-import Notifications from '../Notifications';
-import React, { useContext, useState } from 'react';
+import React, {useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 
-import './curriculumElements.css';
+import './ContainerElements.css';
 
-import VideoPlayer from '../VideoPlayer';
-import MainControls from '../MainControls';
-import { SocketContext } from '../../Context';
+import { HomeScreen } from '../Home';
+import JoinAMeeting from '../Join';
+import StartAMeeting from '../Host';
+import { Link } from 'react-router-dom';
+import ProfileScreen from '../ProfileScreen';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -34,15 +35,15 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     alignItems: "center",
     width: "100%",
+    height: '100%',
  
   },
 }));
-const Curriculum = () => {
-  const classes = useStyles();
-  const {callAccepted, callEnded } = useContext(SocketContext);
-  const [isToggled, setIsToggled] = useState(false);
 
- 
+const Container = () => {
+  const classes = useStyles();
+  const [isToggled, setIsToggled] = useState(false);
+  const [page, setPage] = useState('home');
   const hiddenClass = useMediaQuery({
     query: '(min-device-width: 900px)',
   });
@@ -55,40 +56,28 @@ const closeNav = ()=>{
   toggleHamburger();
   }
 }
+
+const pageControl = (input) => {
+  setPage(input);
+}
   return (
     <div>
-      <div className="ureact-app__container">
+      <div className="video_app__container">
         <nav
           className={
             !hiddenClass && !isToggled
-              ? "ureact-app__nav primary-and-secondary hidden"
-              : "ureact-app__nav primary-and-secondary"
+              ? "video_app__nav primary-and-secondary hidden"
+              : "video_app__nav primary-and-secondary"
           }
         >
-          <a className="nav__a11y-link" href="/">
-            Jump to content
-          </a>
-          <a
-            className="nav__a11y-link"
-            href="mailto:assurancecademy@gmail.com"
-            rel="noreferrer"
-            target="_blank"
-          >
-            Email for accessibility support
-          </a>
           <div className="nav__contents">
             <div className="primary-nav">
-              <div className="ureact-app__nav nav-small">
-                <img
-                  src={`${process.env.PUBLIC_URL}images/a_logo2.svg`}
-                  className="logo"
-                  alt="Assurance Logo"
-                />
+              <div className="video_app__nav nav-small">
                 <div className="nav-groups">
                   <div className="_nav--nav-group-with-sidebar--2eeny">
                     <ul className="nav-group">
                       <li className="nav-item">
-                        <a href="/" title="Home">
+                        <a  title="Home" onClick = {() => setPage('home')}>
                           <span className="nav-item-icon-container">
                             <span className="nav-item-icon">
                               <i
@@ -107,57 +96,18 @@ const closeNav = ()=>{
                         </a>
                       </li>
                       <li className="nav-item _nav--help--1_fHw _nav--inactive--2UbLW">
-                        <a href="/" title="Help">
+                        <a href="#" title="Profile" onClick={() => setPage('profile')}>
                           <span className="nav-item-icon-container">
                             <span className="nav-item-icon">
                               <div className="_nav--unread-badge-container--11uuK">
-                                <i
-                                  className="vds-icon vds-icon--lg"
-                                  role="img"
-                                  aria-label="Help"
-                                  aria-hidden="false"
-                                >
-                                  <svg
-                                    width="32px"
-                                    height="32px"
-                                    viewBox="0 0 32 32"
-                                    version="1.1"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path
-                                      d="M20.9056439,22.3198574 L18.7573899,20.1716035 C17.9669569,20.6951232 17.0190823,21 16,21 C14.9809177,21 14.0330431,20.6951232 13.2426101,20.1716035 L11.0943561,22.3198574 C12.2108087,23.1877298 13.5633312,23.7662723 15.0393533,23.9429146 C15.3558252,23.9808174 15.6764586,24 16,24 C16.3070466,24 16.6114879,23.9827273 16.9122739,23.9486329 C18.4071083,23.7788703 19.7770024,23.1972048 20.9056439,22.3198574 Z M22.3198574,20.9056439 C23.1876432,19.7893027 23.7661569,18.4369386 23.9428618,16.9610884 C23.9807994,16.6444733 24,16.3236921 24,16 C24,15.66094 23.9789283,15.3250894 23.9374234,14.9938816 C23.7543538,13.5355643 23.1788132,12.1993382 22.3198574,11.0943561 L20.1716035,13.2426101 C20.6951232,14.0330431 21,14.9809177 21,16 C21,17.0190823 20.6951232,17.9669569 20.1716035,18.7573899 L22.3198574,20.9056439 Z M9.68014258,20.9056439 L11.8283965,18.7573899 C11.3048768,17.9669569 11,17.0190823 11,16 C11,14.9809177 11.3048768,14.0330431 11.8283965,13.2426101 L9.68014258,11.0943561 C8.75342324,12.2865108 8.15660061,13.7478348 8.02673162,15.341271 C8.00895977,15.5592098 8,15.7789209 8,16 C8,16.3251272 8.01937157,16.6473163 8.05756371,16.9653104 C8.2349426,18.4395081 8.81318121,19.7903633 9.68014258,20.9056439 Z M20.9056439,9.68014258 C19.7335902,8.76904878 18.3013679,8.17682061 16.7392171,8.03369844 C16.4949216,8.01130505 16.248325,8 16,8 C15.7817017,8 15.5647353,8.00873521 15.3494842,8.02603419 C13.7528597,8.15454966 12.2885602,8.75183017 11.0943561,9.68014258 L13.2426101,11.8283965 C14.0330431,11.3048768 14.9809177,11 16,11 C17.0190823,11 17.9669569,11.3048768 18.7573899,11.8283965 L20.9056439,9.68014258 Z M17.1571043,25.9336732 C16.7754602,25.9776915 16.3892728,26 16,26 C15.6319008,26 15.2665884,25.9800494 14.9052998,25.9406688 C9.89744209,25.395509 6,21.1529027 6,16 C6,10.4771525 10.4771525,6 16,6 C21.1579592,6 25.4038347,9.90509495 25.94236,14.9200185 C25.9805835,15.2765119 26,15.6368877 26,16 C26,16.3682524 25.9800328,16.7337155 25.9406197,17.0951506 C25.4366843,21.7224466 21.7758854,25.4015822 17.157131,25.9337731 Z M16,19 C17.6568542,19 19,17.6568542 19,16 C19,14.3431458 17.6568542,13 16,13 C14.3431458,13 13,14.3431458 13,16 C13,17.6568542 14.3431458,19 16,19 Z"
-                                      id="Combined-Shape"
-                                      fillRule="nonzero"
-                                    />
-                                  </svg>
-                                </i>
-                                <div className="_nav--unread-badge--_gCfX" />
+                                <Avatar alt="dummy" src={`${process.env.PUBLIC_URL}images/user.svg`} />
                               </div>
                             </span>
                           </span>
-                          <span className="nav-item-title">Help</span>
+                          <span style = {{marginTop: '3px'}} className="nav-item-title">Profile</span>
                         </a>
                       </li>
-                      {/* <li className="nav-item">
-                        <a href="/" title="Transcript">
-                          <span className="nav-item-icon-container">
-                            <span className="nav-item-icon">
-                              <i
-                                className="vds-icon vds-icon--lg"
-                                role="img"
-                                aria-label="Enterprise Transcript"
-                                aria-hidden="false"
-                              >
-                                <svg viewBox="0 0 33 32">
-                                  <path d="M22 6a2 2 0 012 2v10.64a2 2 0 01-.59 1.419l-5.394 5.36a2 2 0 01-1.41.581H10a2 2 0 01-2-2V8a2 2 0 012-2h12zm0 2H10v16h6v-4.01c0-1.097.897-1.99 1.99-1.99H22V8zm-1.414 12H18v2.586L20.586 20zM19 14a1 1 0 010 2h-6a1 1 0 010-2zm0-4a1 1 0 010 2h-6a1 1 0 010-2z" />
-                                </svg>
-                              </i>
-                            </span>
-                          </span>
-                          <span className="nav-item-title">Transcript</span>
-                        </a>
-                      </li>
-                */}
+                  
                     </ul>
                   </div>
                   <div className="_nav--nav-group-with-sidebar--2eeny">
@@ -207,12 +157,11 @@ const closeNav = ()=>{
             </div>
           </div>
         </nav>
-        <main className="ureact-app__main">
+        <main className="video_app__main">
           <div className="title-area">
-            <div className="ureact-app__header">
+            <div className="video_app__header">
               <div>
                 <div>
-                  {/* this class has to be dynamic based by windows.scroll _header-content--header-small--3sk5P shared--outer-container--3eppq */}
                   <div className="_header-content--header--3mdiS shared--outer-container--3eppq">
                     <div
                       className="hamburger--hamburger--1oS_7"
@@ -240,12 +189,7 @@ const closeNav = ()=>{
                     </div>
 
                     <div className="_header-content--part-info--3iVwL">
-                      <h1>
-                      KINGS' ROOM
-                      </h1>
-                      {/* <p className="_header-content--part-type--1Fn_- shared--label-regular--31PUI shared--context-label--1Ij2n">
-                        Core Curriculum
-                      </p> */}
+                      <h1>Kings' room</h1>
                     </div>
                   </div>
                 </div>
@@ -258,17 +202,12 @@ const closeNav = ()=>{
             style={{ backgroundColor: "rgb(250, 251, 252)" }}
           >
             <div aria-hidden="true" className="hidden-header">
-              <div className="ureact-app__header">
+              <div className="video_app__header">
                 <div>
                   <div>
                     <div className="_header-content--header--3mdiS shared--outer-container--3eppq">
                       <div className="_header-content--part-info--3iVwL">
-                        <h1>
-                        KINGS' ROOM
-                        </h1>
-                        {/* <p className="_header-content--part-type--1Fn_- shared--label-regular--31PUI shared--context-label--1Ij2n">
-                          Core Curriculum
-                        </p> */}
+                        <h1>Kings' room</h1>
                       </div>
                     </div>
                   </div>
@@ -277,55 +216,35 @@ const closeNav = ()=>{
             </div>
             <div
               id="content"
-              className="ureact-app__body"
+              className="cont video_app__body"
               onClick={() => closeNav()}
             >
               <div className="index--container--uI0r1">
                 <div className="index--body--3G2lS">
                   <div className={classes.wrapper}>
-                    <VideoPlayer />
-                    {
-                      (!callAccepted || callEnded) &&  <Sidebar>
-                      <Notifications show = {true} />
-                    </Sidebar>
-                    }
-                   
+               {/* { isShowing &&   <VideoPlayer />}  
+                    {!isShowing && (
+                      <Sidebar enterMeetingRoom = {enterMeetingRoom} />
+                    )} */}
+                  {page === 'home' && <HomeScreen pageControl = {pageControl}/>}  
+                  {page === 'join' && <JoinAMeeting pageControl = {pageControl} />}
+                  {page === 'host' && <StartAMeeting pageControl = {pageControl} />}
+                  {page === 'profile' && <ProfileScreen pageControl = {pageControl}/>}
                   </div>
-
-                  {/* put main video here */}
                 </div>
-                <span
-                  className="footer-link--footer-link--3EuAW"
-             
-                >
+                {/* <span className="footer-link--footer-link--3EuAW">
                   <div className="footer-link--contents--1AXQE shared--outer-container--3eppq">
-                    {/* <div className="footer-link--text--1vhx_">
-                      <h3>Up Next</h3>
-                      <h2 title="React &amp; Redux">React &amp; Redux</h2>
-                    </div> */}
-                    {/* <span className="footer-link--arrow--21K6x">
-                      <i
-                        className="vds-icon"
-                        role="img"
-                        aria-label="caret right"
-                        aria-hidden="false"
-                      >
-                        <svg viewBox="0 0 32 32">
-                          <path d="M12 11.902v8.196a.5.5 0 00.765.424l6.557-4.098a.5.5 0 000-.848l-6.557-4.098a.5.5 0 00-.765.424z" />
-                        </svg>
-                      </i>
-                    </span>
-                */}
-                <MainControls/>
+                    <MainControls />
                   </div>
-                </span>
+                </span> */}
               </div>
             </div>
           </div>{" "}
         </main>{" "}
       </div>
     </div>
-  );
+ 
+ );
 };
 
-export default Curriculum;
+export default Container;

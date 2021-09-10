@@ -3,6 +3,7 @@ html body, html div, html h1, html h2, html h3, html h4, html h5, html h6, html 
     margin: 0;
     padding: 0;
 }
+
 html a {
     color: #017a9b;
     text-decoration: none;
@@ -24,7 +25,7 @@ article, aside, dialog, figcaption, figure, footer, header, hgroup, main, nav, s
     display: block;
 }
 
-.ureact-app__container {
+.video_app__container {
     bottom: 0;
     display: flex;
     font-size: 1rem;
@@ -34,7 +35,7 @@ article, aside, dialog, figcaption, figure, footer, header, hgroup, main, nav, s
     top: 0;
 }
 
-.ureact-app__nav {
+.video_app__nav {
     background: #0D203B;
     bottom: 0;
     height: 100%;
@@ -46,15 +47,15 @@ article, aside, dialog, figcaption, figure, footer, header, hgroup, main, nav, s
     z-index: 10;
 }
 
-.ureact-app__nav.primary-and-secondary {
+.video_app__nav.primary-and-secondary {
     width: 5rem;
 }
 
 
-.ureact-app__nav.hidden {
+.video_app__nav.hidden {
     transform: translateX(-100%);
 }
-.ureact-app__nav .nav__a11y-link {
+.video_app__nav .nav__a11y-link {
     display: block;
     height: 0;
     left: -999em;
@@ -63,24 +64,24 @@ article, aside, dialog, figcaption, figure, footer, header, hgroup, main, nav, s
     text-indent: -999em;
     width: 0;
 }
-.ureact-app__nav.small-primary .primary-nav, .ureact-app__nav.primary-and-secondary .primary-nav {
+.video_app__nav.small-primary .primary-nav, .video_app__nav.primary-and-secondary .primary-nav {
     width: 4.5rem;
 }
-.ureact-app__nav .nav__contents {
+.video_app__nav .nav__contents {
     display: flex;
     height: 100%;
 }
-.ureact-app__nav .nav__contents .primary-nav, .ureact-app__nav .nav__contents .secondary-nav {
+.video_app__nav .nav__contents .primary-nav, .video_app__nav .nav__contents .secondary-nav {
     height: 100%;
 }
-.ureact-app__nav .nav__contents .primary-nav {
+.video_app__nav .nav__contents .primary-nav {
     flex-grow: 0;
     flex-shrink: 0;
     position: relative;
     overflow: hidden;
 }
 
-._nav, .ureact-app__nav .nav-large, .ureact-app__nav .nav-small {
+._nav, .video_app__nav .nav-large, .video_app__nav .nav-small {
     display: flex;
     flex-direction: column;
     font-size: 2rem;
@@ -94,20 +95,20 @@ article, aside, dialog, figcaption, figure, footer, header, hgroup, main, nav, s
     align-items: center;
 }
 /* LOGO */
-.ureact-app__nav .logo {
+.video_app__nav .logo {
     flex: 0 0 auto;
     margin: 1rem 0;
 }
-.logo, .ureact-app__nav .nav-small .logo {
+.logo, .video_app__nav .nav-small .logo {
     margin-left: auto;
     margin-right: auto;
 }
-.ureact-app__nav .nav-small .logo {
+.video_app__nav .nav-small .logo {
     width: 3.5rem;
 }
 /* lOGO END */
 
-.ureact-app__nav .nav-groups {
+.video_app__nav .nav-groups {
     display: flex;
     flex-direction: column;
     flex: 1 1 100%;
@@ -115,6 +116,7 @@ article, aside, dialog, figcaption, figure, footer, header, hgroup, main, nav, s
 }
 ._nav--nav-group-with-sidebar--2eeny {
     width: 4.5rem;
+    margin-top: 1rem;
 }
 ._nav--nav-group-with-sidebar--2eeny a span {
     font-size: .6rem;
@@ -124,7 +126,7 @@ article, aside, dialog, figcaption, figure, footer, header, hgroup, main, nav, s
     text-indent: 0!important;
     position: relative!important;
 }
-.ureact-app__nav .nav-group {
+.video_app__nav .nav-group {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -132,7 +134,7 @@ article, aside, dialog, figcaption, figure, footer, header, hgroup, main, nav, s
 html li {
     list-style: none;
 }
-.ureact-app__nav .nav-item {
+.video_app__nav .nav-item {
     line-height: 1;
     margin-bottom: .25rem;
 }
@@ -140,19 +142,19 @@ html li {
     display: flex;
     flex-direction: column;
 }
-.ureact-app__nav .nav-item a {
+.video_app__nav .nav-item a {
     align-items: center;
     color: #dbe2e8;
     display: flex;
     padding: .5rem .75rem;
     text-decoration: none;
 }
-.ureact-app__nav .nav-item-icon-container {
+.video_app__nav .nav-item-icon-container {
     display: inline-block;
     position: relative;
     text-align: center;
 }
-.ureact-app__nav .nav-item-icon {
+.video_app__nav .nav-item-icon {
     position: relative;
     width: 2rem;
 }
@@ -175,12 +177,12 @@ html li {
     height: 2.5rem;
     width: 2.5rem;
 }
-.ureact-app__nav .nav__contents .secondary-nav {
+.video_app__nav .nav__contents .secondary-nav {
     background: #2e3d49;
     overflow-y: auto;
     width: 100%;
 }
-.ureact-app__nav .nav__contents .primary-nav, .ureact-app__nav .nav__contents .secondary-nav {
+.video_app__nav .nav__contents .primary-nav, .video_app__nav .nav__contents .secondary-nav {
     height: 100%;
 }
 .index--sidebar-container--WjVqN {
@@ -403,7 +405,7 @@ html li {
 
 /* main */
 
-.ureact-app__main {
+.video_app__main {
     box-sizing: border-box;
     height: 100%;
     min-width: 300px;
@@ -412,7 +414,7 @@ html li {
     width: 100%;
 }
 
-.ureact-app__main .title-area {
+.video_app__main .title-area {
     background-color: #fff;
     box-shadow: 0 0 40px rgb(0 0 0 / 20%);
     left: 0;
@@ -422,17 +424,17 @@ html li {
     transition: .2s margin-left ease-in-out,.2s margin-right ease-in-out;
     z-index: 9;
 }
-.primary-and-secondary+.ureact-app__main .title-area, .primary-and-secondary+.ureact-app__main .content-area {
+.primary-and-secondary+.video_app__main .title-area, .primary-and-secondary+.video_app__main .content-area {
     margin-left: 5rem;
 }
-.ureact-app__main .title-area, .ureact-app__main .content-area, .hidden+.ureact-app__main .title-area, .hidden+.ureact-app__main .content-area, .none+.ureact-app__main .title-area, .none+.ureact-app__main .content-area {
+.video_app__main .title-area, .video_app__main .content-area, .hidden+.video_app__main .title-area, .hidden+.video_app__main .content-area, .none+.video_app__main .title-area, .none+.video_app__main .content-area {
     margin-left: 0;
 }
 
 
 .shared--outer-container--3eppq {
     box-sizing: border-box;
-    max-width: 1024px;
+    /* max-width: 1024px; */
     padding: 0 2rem;
     margin: 0 auto;
     width: 100%;
@@ -441,12 +443,14 @@ html li {
 
 ._header-content--header--3mdiS, ._header-content--header-small--3sk5P {
     transition: min-height .3s ease-in-out;
-    background-color: #fff;
+    background-color:#ffF ;
     display: flex;
     align-items: center;
+    color: #0d203b;
 }
 ._header-content--header--3mdiS {
-    min-height: 5rem;
+    max-height: 3rem;
+    padding: 5px 0;
 }
 ._header-content--part-info--3iVwL {
     align-items: center;
@@ -464,7 +468,15 @@ html li {
 }
 ._header-content--header--3mdiS h1 {
     font-size: 2rem;
-    font-weight: 300;
+    font-weight: 600;
+    text-align: center;   
+    color: #1f1f1f; 
+
+}
+@media screen  and (max-width: 480px) {
+    ._header-content--header--3mdiS h1 {
+        margin-right: 48px;
+    }
 }
 .shared--context-label--1Ij2n {
     font-size: .75rem;
@@ -487,14 +499,14 @@ html li {
 } */
 
 /* content */
-.ureact-app__main .content-area {
+.video_app__main .content-area {
     display: flex;
     flex-direction: column;
     height: 100%;
     overflow-y: auto;
     transition: .2s padding-top ease-in-out,.2s margin-left ease-in-out,.2s margin-right ease-in-out;
 }
-.ureact-app__main .hidden-header {
+.video_app__main .hidden-header {
     visibility: hidden;
 
 }
@@ -597,12 +609,19 @@ html li {
 }
 
 /* content body */
-.ureact-app__body {
+.cont.video_app__body {
     display: flex;
     flex-direction: column;
     flex: 1 0 auto;
     transition: .3s height ease-in-out;
 }
+ @media screen and (min-width: 900px){
+    .cont.video_app__body {
+        margin-left: 5rem;
+    }
+ }
+    
+
 .index--container--uI0r1 {
     display: flex;
     flex-direction: column;
@@ -611,8 +630,8 @@ html li {
 }
 .index--body--3G2lS {
     flex: 1 1 auto;
-    margin-bottom: 5rem;
-    max-height: calc(100vh - 142px);
+    /* margin-bottom: 5rem; */
+    height: 100%;
     overflow-y: scroll;
 }
 
@@ -696,30 +715,33 @@ html main li, html main p {
     border-top: 1px solid #dbe2e8;
     display: block;
     flex: 0 0 auto;
-    /* padding: 1rem 0; */
+   z-index: 10000;
     position: fixed;
     bottom: 0;
     right: 0;
     left: 5rem;
+   height: 5rem;
 
 }
 @media (max-width: 61.24em){
 .footer-link--footer-button-link--JEtP9, .footer-link--footer-link--3EuAW {
-    /* padding: .8rem 0; */
+    padding: .8rem 0;
     left:0;
 }
 }
 .footer-link--contents--1AXQE {
     align-items: center;
     display: flex;
+    height: 100%;
+    /* padding: 10px; */
 }
 @media (max-width: 61.25em){
-    .ureact-app__nav.primary-and-secondary .footer-link--contents--1AXQE {
+    .video_app__nav.primary-and-secondary .footer-link--contents--1AXQE {
         padding-left: 6rem;
     }
 }
 @media (max-width: 61.25em){
-.ureact-app__nav.hidden .footer-link--contents--1AXQE {
+.video_app__nav.hidden .footer-link--contents--1AXQE {
     padding-left: 0;
 }
 }
@@ -755,7 +777,7 @@ html main li, html main p {
 /* hamburger */
 .hamburger--hamburger--1oS_7 {
     align-self: flex-start;
-    margin-right: 1rem;
+    /* margin-right: 1rem; */
 }
 
 .vds-round-button {
@@ -813,3 +835,4 @@ html main li, html main p {
 .vds-round-button .vds-icon {
     margin: 0;
 }
+
