@@ -30,12 +30,11 @@ const ContextProvider = ({ children }) => {
   useEffect(() => {
     socketRef.current = io(URL) 
     if(stream && roomid){
-      // myVideo.current.srcObject = stream;
     const roomID = roomid.trim().toLowerCase();
     socketRef.current.emit('join room', {roomID, name}, (error) => {
       if(error) {
         setCallAccepted(false)
-        alert(error);
+        alert(error + " Please Go back and take another user name");
       }
     else{
       setCallAccepted(true)
@@ -64,7 +63,7 @@ const ContextProvider = ({ children }) => {
         setPeers(peers);
     })
         socketRef.current.on('user joined', payload => {
-          const peer = addPeer(payload.signal, payload.callerID, stream, payload.name);
+          const peer = addPeer(payload.signal, payload.callerID, stream);
           peersRef.current.push({
             peerID: payload.callerID,
             peer,
@@ -109,7 +108,7 @@ const sendMessage = (event) => {
   }
 }
 
-  const createPeer = (userToSignal, callerID, stream, name) => {
+  const createPeer = (userToSignal, callerID, stream) => {
     const peer = new Peer({
       initiator: true,
       trickle: false,
@@ -120,7 +119,6 @@ const sendMessage = (event) => {
         userToSignal,
         callerID,
         signal,
-        name
       });
     });
 
