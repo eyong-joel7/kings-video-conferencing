@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { makeStyles } from '@material-ui/core';
 import Chat from '../ChatComponents/Chat/Chat'
 import React, { useEffect, useRef, useState } from 'react'
@@ -20,7 +21,36 @@ const URl = 'https://kings-video-conferencing.herokuapp.com/';
 //   width: window.innerWidth /2
 // };
 
+// window.onbeforeunload = function (e) {
+// 	// var message = "Are you sure ?";
+// 	// var firefox = /Firefox[/\s](\d+)/.test(navigator.userAgent);
+// 	// if (firefox) {
+// 	// 	var dialog = document.createElement("div");
+// 	// 	document.body.appendChild(dialog);
+// 	// 	dialog.id = "dialog";
+// 	// 	dialog.style.visibility = "hidden";
+// 	// 	dialog.innerHTML = message; 
+// 	// 	var left = document.body.clientWidth / 2 - dialog.clientWidth / 2;
+// 	// 	dialog.style.left = left + "px";
+// 	// 	dialog.style.visibility = "visible";  
+// 	// 	var shadow = document.createElement("div");
+// 	// 	document.body.appendChild(shadow);
+// 	// 	shadow.id = "shadow";		
+// 	// 	//tip with setTimeout
+// 	// 	setTimeout(function () {
+// 	// 		document.body.removeChild(document.getElementById("dialog"));
+// 	// 		document.body.removeChild(document.getElementById("shadow"));
+// 	// 	}, 0);
+// 	// }
+// 	// return message;
+
+
+// }
+
 const ConferenceRoom = (props) => {
+  window.onbeforeunload = function(e){
+    leaveCall();
+  }
   const location = useLocation();
  const history  = useHistory();
   const [users, setUsers] = useState([]);
@@ -131,10 +161,10 @@ const ConferenceRoom = (props) => {
             "Permissions have not been granted to use your camera and " +
               "microphone, you need to allow the page access to your devices"
           );
-        }
-       else setMessage("getUserMedia error: " + error.name + `error: ${error}` );
+        } else
+          setMessage("getUserMedia error: " + error.name + `error: ${error}`);
       });
-  }, [history, roomID, userName]);
+  }, []);
 
   const sendMessage = (event) => {
     event.preventDefault();
@@ -171,8 +201,6 @@ const ConferenceRoom = (props) => {
   peer.on('signal', signal => {
   socketRef.current.emit('returning signal', {signal, callerID})
   } );
-  
-
   peer.signal(incomingSignal);
   // setCallAccepted(true); //added
   return peer;
@@ -356,7 +384,8 @@ const ConferenceRoom = (props) => {
         />
       )}
       </div>
-    );
+   
+   );
 }
 
 export default ConferenceRoom
