@@ -47,7 +47,7 @@ const ConferenceRoom = (props) => {
    history.push('/');
    return
     }
-    socketRef.current = io('/');
+    socketRef.current = io(URL);
     const constraints = (window.constraints = {
       audio: true,
      video: videoConstraints
