@@ -141,7 +141,7 @@ const Room = (props) => {
             history.push('/');
              }
              
-        socketRef.current = io.connect("http://localhost:5000/");
+        socketRef.current = io.connect("https://kings-video-conferencing.herokuapp.com/");
         navigator.mediaDevices.getUserMedia({ video: videoConstraints, audio: true }).then(stream => {
             userVideo.current.srcObject = stream;
             setStream(stream);
