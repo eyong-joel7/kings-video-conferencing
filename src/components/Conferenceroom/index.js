@@ -15,10 +15,10 @@ import Peer from 'simple-peer';
 import NotificationModal from '../Modals';
 const URl = 'https://kings-video-conferencing.herokuapp.com/';
 
-const videoConstraints = {
-  height: window.innerHeight /2,
-  width: window.innerWidth /2
-};
+// const videoConstraints = {
+//   height: window.innerHeight /2,
+//   width: window.innerWidth /2
+// };
 
 const ConferenceRoom = (props) => {
   const location = useLocation();
@@ -48,10 +48,10 @@ const ConferenceRoom = (props) => {
    return
     }
     socketRef.current = io(URl);
-    const constraints = (window.constraints = {
+    const constraints =  {
       audio: true,
-     video: videoConstraints
-    });
+     video: true,
+    };
     navigator.mediaDevices
       .getUserMedia(constraints)
       .then(function (stream) {
@@ -115,8 +115,6 @@ const ConferenceRoom = (props) => {
                 peersRef.current = peers;
                 setPeers(peers);
               })
-         
-            
       })
       .catch(function (error) {
         setShow(true);
