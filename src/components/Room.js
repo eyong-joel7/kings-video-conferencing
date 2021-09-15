@@ -12,7 +12,8 @@ import Participants from "./Participants";
 import Chat from "./ChatComponents/Chat/Chat";
 import NotificationModal from "./Modals";
 import "../components/Conferenceroom/conferenceElements.css";
-
+import Cop2CB from "./Modals/Copy2C";
+import { RECENT_ACTIVITIES } from "../CONSTANTS";
 export const ServicesContainer = styled.div`
   width: 100%;
   margin-right: auto;
@@ -95,8 +96,8 @@ const Room = (props) => {
   const [isToggled, setIsToggled] = useState(false);
   const [selected, setSelected] = useState("");
 
-
   const [show, setShow] = useState(false);
+  const [copyInfo, setCopyInfo] = useState(false);
   const [timer, setTimer] = useState(false);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
@@ -116,13 +117,14 @@ const Room = (props) => {
     }
   };
   const history = useHistory();
-
-  const userName = location.state?.name;
-  const room = location.state?.roomid;
+  const getUrl = window.location.href && window.location.href.split("/")[4];
+  const userName = location.state?.name || localStorage.getItem("firstName");
+  const room = location.state?.roomid || getUrl;
   const roomID = room?.trim().toLowerCase();
 
   useEffect(() => {
     if (!roomID || !userName) {
+      // Need to inform the user of this before executing redirect
       history.push("/");
     }
 
@@ -134,12 +136,11 @@ const Room = (props) => {
       .then((stream) => {
         userVideo.current.srcObject = stream;
         setStream(stream);
-       
+
         socketRef.current.emit("join room", { roomID, userName }, (error) => {
           if (error) {
             setShow(true);
             setErrorMessage(error);
-           
           }
         });
         socketRef.current.on("all users", (users) => {
@@ -206,7 +207,7 @@ const Room = (props) => {
       })
       .catch(function (error) {
         setShow(true);
-       
+
         if (error.name === "ConstraintNotSatisfiedError") {
           setErrorMessage("The resolution is not supported by your device.");
         } else if (error.name === "PermissionDeniedError") {
@@ -219,6 +220,12 @@ const Room = (props) => {
             "getUserMedia error: " + error.name + `error: ${error}`
           );
       });
+
+    return () => {
+      stream?.getTracks() &&
+        stream.getTracks().forEach((track) => track.stop());
+      setStream(null);
+    };
   }, []);
 
   function createPeer(userToSignal, callerID, stream) {
@@ -267,6 +274,45 @@ const Room = (props) => {
     }
   };
   const leaveCall = () => {
+    let newList = [];
+    const storedActivityList = JSON.parse(
+      localStorage.getItem(RECENT_ACTIVITIES)
+    );
+    const today = new Date();
+    const date =
+      today.getFullYear() +
+      "-" +
+      (today.getMonth() + 1) +
+      "-" +
+      today.getDate();
+    const time =
+      today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    const dateTime = date + " " + time;
+    const newActivity = {
+      meetingID: roomID,
+      dateTime: dateTime,
+    };
+    if (storedActivityList) {
+      const currentMeetingDetails = storedActivityList.find(
+        (activity) => activity.meetingID === roomID
+      );
+      if (currentMeetingDetails) {
+        newList = storedActivityList.filter(
+          (listItem) => listItem.meetingID !== roomID
+        );
+        newList.push(newActivity);
+        localStorage.setItem(RECENT_ACTIVITIES, JSON.stringify(newList));
+      } else {
+        storedActivityList.push(newActivity);
+        localStorage.setItem(
+          RECENT_ACTIVITIES,
+          JSON.stringify(storedActivityList)
+        );
+      }
+    } else {
+      localStorage.setItem(RECENT_ACTIVITIES, JSON.stringify([newActivity]));
+    }
+
     socketRef.current.destroy();
     window.location.replace("/");
   };
@@ -363,9 +409,8 @@ const Room = (props) => {
               </div>
             </div>
           </div>
-         
-          {/* Put video thumbnail here */}
-          <div className="content-area" style={{backgroundColor:'#2c4364'}}>
+
+          <div className="content-area" style={{ backgroundColor: "#2c4364" }}>
             <div aria-hidden="true" className="hidden-header">
               <div className="video_app__header">
                 <div>
@@ -379,49 +424,52 @@ const Room = (props) => {
                 </div>
               </div>
             </div>
-          <div
-                    id="content"
-                    className="video_app__body"
-                    onClick={() => closeNav()}
-                  >
-                    <div className="index--container--uI0r1">
-                      <div className="index--body--3G2lS">
-                        <ServicesContainer>
-                          <ServicesWrapper>
-                            <ServicesCard
-                              muted
-                              ref={userVideo}
-                              autoPlay
-                              playsInline
-                            />
-      
-                            {peersRef.current.map((peer) => {
-                              return <Video key={peer.peerID} peer={peer.peer} />;
-                            })}
-                          </ServicesWrapper>
-                        </ServicesContainer>
-                      </div>
-                      <span className="footer-link--footer-link--3EuAW">
-                        <div className="footer-link--contents--1AXQE shared--outer-container--3eppq">
-                          <MainControls
-                            toggleHamburger={toggleHamburger}
-                            setSelected={setSelected}
-                            playStop={playStop}
-                            muteUnmute={muteUnmute}
-                            leaveCall={leaveCall}
-                            main__mute_button={main__mute_button}
-                            main__video_button={main__video_button}
-                            stream={stream}
-                            users={users}
-                          />
-                        </div>
-                      </span>
-                    </div>
+            <div
+              id="content"
+              className="video_app__body"
+              onClick={() => closeNav()}
+            >
+              <div className="index--container--uI0r1">
+                <div className="index--body--3G2lS">
+                  <ServicesContainer>
+                    <ServicesWrapper>
+                      <ServicesCard
+                        muted
+                        ref={userVideo}
+                        autoPlay
+                        playsInline
+                      />
+
+                      {peersRef.current.map((peer) => {
+                        return <Video key={peer.peerID} peer={peer.peer} />;
+                      })}
+                    </ServicesWrapper>
+                  </ServicesContainer>
+                </div>
+                <span className="footer-link--footer-link--3EuAW">
+                  <div className="footer-link--contents--1AXQE shared--outer-container--3eppq">
+                    <MainControls
+                      toggleHamburger={toggleHamburger}
+                      setSelected={setSelected}
+                      setCopyInfo={setCopyInfo}
+                      playStop={playStop}
+                      muteUnmute={muteUnmute}
+                      leaveCall={leaveCall}
+                      main__mute_button={main__mute_button}
+                      main__video_button={main__video_button}
+                      stream={stream}
+                      users={users}
+                    />
                   </div>
-          
+                </span>
+              </div>
+            </div>
           </div>
         </main>
       </div>
+      {copyInfo && (
+        <Cop2CB handleClose={() => setCopyInfo(false)} show={copyInfo} />
+      )}
       {show && (
         <NotificationModal
           show={show}
