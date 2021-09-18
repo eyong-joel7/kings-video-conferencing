@@ -137,7 +137,7 @@ const Room = (props) => {
   const room = location.state?.roomid || getUrl;
   const roomID = room?.trim().toLowerCase();
   const URL = "https://kings-video-conferencing.herokuapp.com/";
-  // "http://localhost:5000/"
+  // "/http://localhost:5000"
   useEffect(() => {
     if (!roomID || !userName) {
       // Need to inform the user of this before executing redirect
@@ -395,16 +395,6 @@ const Room = (props) => {
         });
     };
 
-
-    
-    // const enabled = stream.getAudioTracks()[0].enabled;
-    // if (enabled) {
-    //   stream.getAudioTracks()[0].enabled = false;
-    //   setUnmuteButton();
-    // } else {
-    //   setMuteButton();
-    //   stream.getAudioTracks()[0].enabled = true;
-    // }
   };
 
   const playStop = () => {
@@ -442,16 +432,6 @@ const Room = (props) => {
           });
       };
 
-
-
-    // let enabled = stream.getVideoTracks()[0].enabled;
-    // if (enabled) {
-    //   stream.getVideoTracks()[0].enabled = false;
-    //   setPlayVideo();
-    // } else {
-    //   setStopVideo();
-    //   stream.getVideoTracks()[0].enabled = true;
-    // }
   };
 
   const setMuteButton = () => {

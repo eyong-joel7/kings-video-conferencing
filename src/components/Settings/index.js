@@ -97,7 +97,7 @@ const handleChangeSpeaker = (event) => {
     <Container className = {classes.root} component="main">
        
       <CssBaseline />
-     <div onClick = {handleClose} style = {{display: 'flex', alignItems:'center'}}> <ChevronLeft/><span>Back</span></div>
+     <div onClick = {handleClose} style = {{display: 'flex', alignItems:'center',cursor:'pointer'}}> <ChevronLeft/><span>Back</span></div>
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
            <MiscellaneousServicesIcon className={classes.svg}/>
@@ -107,7 +107,7 @@ const handleChangeSpeaker = (event) => {
         </Typography>
     
       <FormControl sx={{ m: 1}} className = {classes.form}>
-        <InputLabel id="cameras">Camera</InputLabel>
+        <InputLabel id="cameras">Connected Cameras</InputLabel>
         <Select
           labelId="cameras"
           id="cameras"
@@ -128,7 +128,7 @@ const handleChangeSpeaker = (event) => {
       </FormControl>
      
       <FormControl sx={{ m: 1 }} className = {classes.form}>
-        <InputLabel id="mics">Microphone</InputLabel>
+        <InputLabel id="mics">Connected Microphones</InputLabel>
         <Select
           labelId="mics"
           id="mics"
@@ -148,7 +148,7 @@ const handleChangeSpeaker = (event) => {
       </FormControl>
      
       <FormControl sx={{ m: 1 }} className = {classes.form}>
-        <InputLabel id="mics">Audio Output</InputLabel>
+        <InputLabel id="mics">Audio Outputs</InputLabel>
         <Select
           labelId="mics"
           id="mics"
