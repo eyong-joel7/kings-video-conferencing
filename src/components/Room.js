@@ -1,10 +1,9 @@
 /* eslint-disable no-unused-vars */
-
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
 import Peer from "simple-peer";
-import styled from "styled-components";
+
 import { useHistory, useLocation } from "react-router";
 import { useMediaQuery } from "react-responsive";
 import MainControls from "./MainControls";
@@ -14,77 +13,84 @@ import NotificationModal from "./Modals";
 import "../components/Conferenceroom/conferenceElements.css";
 import Cop2CB from "./Modals/Copy2C";
 import { RECENT_ACTIVITIES } from "../CONSTANTS";
-export const ServicesContainer = styled.div`
-  width: 100%;
-  margin-right: auto;
-  margin-left: auto;
-  padding-right: 15px;
-  padding-left: 15px;
-  max-height: 100%;
-  justify-items: center;
-  @media (min-width: 576px) {
-    max-width: 540px;
-  }
-  @media (min-width: 768px) {
-    max-width: 720px;
-  }
-  @media (min-width: 992px) {
-    max-width: 960px;
-  }
-  @media screen and (min-width: 1200px) {
-    max-width: 1140px;
-  }
-`;
-export const ServicesWrapper = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  justify-items: center;
-  grid-gap: 10px;
-  height: 100%;
-  width: 100%;
-  @media screen and (max-width: 1000px) {
-    grid-template-columns: 1fr 1fr;
-  }
-  @media screen and (max-width: 768px) {
-    grid-template-columns: 1fr;
-  } ;
-`;
 
-export const ServicesCard = styled.video`
-  background: #fff;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  border-radius: 5px;
-  width: 100%;
-  height: 100%;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-  transition: all 0.2s ease-in-out;
+import MicOffIcon from "@mui/icons-material/MicOff";
+import MicIcon from "@mui/icons-material/Mic";
+import VideocamIcon from "@mui/icons-material/Videocam";
+import VideocamOffIcon from "@mui/icons-material/VideocamOff";
+import { makeStyles } from "@material-ui/styles";
+import {
+  SELECTED_CAMERA_DEVICE_ID,
+  SELECTED_MIC_DEVICE_ID,
+} from "../CONSTANTS";
+import {
+  FooterContainer,
+  UserNameText,
+  VideoCard,
+  VideoContainer,
+  VideoStream,
+  VideoWrapper,
+} from "./roomElements";
 
-  &:hover {
-    transform: scale(1.01);
-  }
-`;
+const useStyles = makeStyles((theme) => ({
+  color: {
+    color: "#fff",
+    fontSize: "1rem",
+  },
 
+  iconsEnabled:{
+    backgroundColor: '#1a3050',
+    borderRadius: '50%',
+    padding: '5px',
+    margin: '0 2px',
+  },
+  iconsDisabled:{
+    backgroundColor: 'red',
+    borderRadius: '50%',
+    padding: '5px',
+    margin: '0 2px',
+  },
+  controls: {
+    display: "flex",
+    justifyContent: "space-between",
+  },
+}));
 const Video = (props) => {
   const ref = useRef();
-
   useEffect(() => {
-    props.peer.on("stream", (stream) => {
+    props.peer.peer.on("stream", (stream) => {
       ref.current.srcObject = stream;
     });
   }, []);
-
-  return <ServicesCard playsInline autoPlay ref={ref} />;
-};
-
-const videoConstraints = {
-  height: window.innerHeight / 2,
-  width: window.innerWidth / 2,
+  const classes = useStyles();
+  function capitalize(s) {
+    return s && s[0].toUpperCase() + s.slice(1);
+  }
+  return (
+    <VideoCard>
+      <VideoStream playsInline autoPlay ref={ref} />
+      <FooterContainer>
+        <UserNameText>{capitalize(props.peer.peerUsername)}</UserNameText>
+        <div className={classes.controls}>
+        {props.videoFlagTemp ? <div className={ props.videoFlagTemp? classes.iconsEnabled : classes.iconsDisabled}> <VideocamIcon className={classes.color} /> </div>:<div  className={ props.videoFlagTemp? classes.iconsEnabled : classes.iconsDisabled}> <VideocamOffIcon className={classes.color}/> </div> } 
+        {props.audioFlagTemp ? <div className={ props.audioFlagTemp? classes.iconsEnabled : classes.iconsDisabled}><MicIcon className={classes.color}/></div> : <div className={ props.audioFlagTemp? classes.iconsEnabled : classes.iconsDisabled}><MicOffIcon className={classes.color} /></div> } 
+        </div>
+      </FooterContainer>
+    </VideoCard>
+  );
 };
 
 const Room = (props) => {
+  const cameraID = localStorage.getItem(SELECTED_CAMERA_DEVICE_ID);
+  const audioID = localStorage.getItem(SELECTED_MIC_DEVICE_ID);
+  const constraints = {
+    audio: { echoCancellation: true },
+    video: {
+      width: { min: 640 },
+      height: { min: 480 },
+    },
+  };
+
   const [peers, setPeers] = useState([]);
   const [users, setUsers] = useState([]);
   const socketRef = useRef();
@@ -95,6 +101,10 @@ const Room = (props) => {
   const [stream, setStream] = useState();
   const [isToggled, setIsToggled] = useState(false);
   const [selected, setSelected] = useState("");
+
+  const [audioFlag, setAudioFlag] = useState(true);
+  const [videoFlag, setVideoFlag] = useState(true);
+  const [userUpdate, setUserUpdate] = useState([]);
 
   const [show, setShow] = useState(false);
   const [copyInfo, setCopyInfo] = useState(false);
@@ -111,6 +121,10 @@ const Room = (props) => {
     setIsToggled(!isToggled);
   };
 
+  function capitalize(s) {
+    return s && s[0].toUpperCase() + s.slice(1);
+  }
+
   const closeNav = () => {
     if (!hiddenClass && isToggled) {
       toggleHamburger();
@@ -119,41 +133,58 @@ const Room = (props) => {
   const history = useHistory();
   const getUrl = window.location.href && window.location.href.split("/")[4];
   const userName = location.state?.name || localStorage.getItem("firstName");
+  const host = location.state?.host;
   const room = location.state?.roomid || getUrl;
   const roomID = room?.trim().toLowerCase();
-
+  const URL = "https://kings-video-conferencing.herokuapp.com/";
+  // "http://localhost:5000/"
   useEffect(() => {
     if (!roomID || !userName) {
       // Need to inform the user of this before executing redirect
       history.push("/");
     }
+    if (cameraID) constraints.video["deviceId"] = cameraID;
+    if (audioID) constraints.audio["deviceId"] = audioID;
+    console.log("constraints", constraints);
 
-    socketRef.current = io.connect(
-      "https://kings-video-conferencing.herokuapp.com/"
-    );
+    socketRef.current = io.connect(URL);
     navigator.mediaDevices
-      .getUserMedia({ video: videoConstraints, audio: true })
+      .getUserMedia(constraints)
       .then((stream) => {
         userVideo.current.srcObject = stream;
         setStream(stream);
+        !host &&
+          socketRef.current.emit("join room", { roomID, userName }, (error) => {
+            if (error) {
+              setShow(true);
+              setErrorMessage(error);
+            }
+          });
+        host &&
+          socketRef.current.emit(
+            "start a meeting",
+            { roomID, userName },
+            (error) => {
+              if (error) {
+                setShow(true);
+                setErrorMessage(error);
+              }
+            }
+          );
 
-        socketRef.current.emit("join room", { roomID, userName }, (error) => {
-          if (error) {
-            setShow(true);
-            setErrorMessage(error);
-          }
-        });
         socketRef.current.on("all users", (users) => {
           const peers = [];
-          users.forEach((userID) => {
-            const peer = createPeer(userID, socketRef.current.id, stream);
+          users.forEach((user) => {
+            const peer = createPeer(user.id, socketRef.current.id, stream);
             peersRef.current.push({
-              peerID: userID,
+              peerID: user.id,
               peer,
+              peerUsername: user.userName,
             });
             peers.push({
-              peerID: userID,
+              peerID: user.id,
               peer,
+              peerUsername: user.userName,
             });
           });
           setPeers(peers);
@@ -164,11 +195,13 @@ const Room = (props) => {
           peersRef.current.push({
             peerID: payload.callerID,
             peer,
+            peerUsername: payload.userName,
           });
 
           const peerObj = {
             peer,
             peerID: payload.callerID,
+            peerUsername: payload.userName,
           };
           setPeers((users) => [...users, peerObj]);
         });
@@ -200,6 +233,11 @@ const Room = (props) => {
         socketRef.current.on("roomData", ({ users }) => {
           setUsers(users);
         });
+
+        socketRef.current.on("change", (payload) => {
+          setUserUpdate(payload);
+        });
+
         if (hiddenClass) {
           setIsToggled(true);
           setSelected("chat");
@@ -273,6 +311,12 @@ const Room = (props) => {
       );
     }
   };
+
+  const goBack = () => {
+    socketRef.current?.destroy();
+    window.location.replace("/");
+  };
+
   const leaveCall = () => {
     let newList = [];
     const storedActivityList = JSON.parse(
@@ -291,6 +335,7 @@ const Room = (props) => {
     const newActivity = {
       meetingID: roomID,
       dateTime: dateTime,
+      host: host,
     };
     if (storedActivityList) {
       const currentMeetingDetails = storedActivityList.find(
@@ -312,30 +357,101 @@ const Room = (props) => {
     } else {
       localStorage.setItem(RECENT_ACTIVITIES, JSON.stringify([newActivity]));
     }
-
-    socketRef.current.destroy();
+    socketRef.current?.destroy();
     window.location.replace("/");
   };
   const muteUnmute = () => {
-    const enabled = stream.getAudioTracks()[0].enabled;
-    if (enabled) {
-      stream.getAudioTracks()[0].enabled = false;
-      setUnmuteButton();
-    } else {
-      setMuteButton();
-      stream.getAudioTracks()[0].enabled = true;
-    }
+    if (userVideo.current.srcObject) {
+      userVideo.current.srcObject
+        .getTracks()
+        .forEach(function (track) {
+          if (track.kind === "audio") {
+            if (track.enabled) {
+              socketRef.current.emit("change", [
+                ...userUpdate,
+                {
+                  id: socketRef.current.id,
+                  videoFlag,
+                  audioFlag: false,
+                },
+              ]);
+              track.enabled = false;
+              setAudioFlag(false);
+              setUnmuteButton();
+            } else {
+              socketRef.current.emit("change", [
+                ...userUpdate,
+                {
+                  id: socketRef.current.id,
+                  videoFlag,
+                  audioFlag: true,
+                },
+              ]);
+              track.enabled = true;
+              setAudioFlag(true);
+              setMuteButton();
+            }
+          }
+        });
+    };
+
+
+    
+    // const enabled = stream.getAudioTracks()[0].enabled;
+    // if (enabled) {
+    //   stream.getAudioTracks()[0].enabled = false;
+    //   setUnmuteButton();
+    // } else {
+    //   setMuteButton();
+    //   stream.getAudioTracks()[0].enabled = true;
+    // }
   };
 
   const playStop = () => {
-    let enabled = stream.getVideoTracks()[0].enabled;
-    if (enabled) {
-      stream.getVideoTracks()[0].enabled = false;
-      setPlayVideo();
-    } else {
-      setStopVideo();
-      stream.getVideoTracks()[0].enabled = true;
-    }
+      if (userVideo.current.srcObject) {
+        userVideo.current.srcObject
+          .getTracks()
+          .forEach(function (track) {
+            if (track.kind === "video") {
+              if (track.enabled) {
+                socketRef.current.emit("change", [
+                  ...userUpdate,
+                  {
+                    id: socketRef.current.id,
+                    videoFlag: false,
+                    audioFlag,
+                  },
+                ]);
+                track.enabled = false;
+                setVideoFlag(false);
+                setPlayVideo()
+              } else {
+                socketRef.current.emit("change", [
+                  ...userUpdate,
+                  {
+                    id: socketRef.current.id,
+                    videoFlag: true,
+                    audioFlag,
+                  },
+                ]);
+                track.enabled = true;
+                setVideoFlag(true);
+                setStopVideo()
+              }
+            }
+          });
+      };
+
+
+
+    // let enabled = stream.getVideoTracks()[0].enabled;
+    // if (enabled) {
+    //   stream.getVideoTracks()[0].enabled = false;
+    //   setPlayVideo();
+    // } else {
+    //   setStopVideo();
+    //   stream.getVideoTracks()[0].enabled = true;
+    // }
   };
 
   const setMuteButton = () => {
@@ -369,6 +485,7 @@ const Room = (props) => {
         `;
     main__video_button.current.innerHTML = html;
   };
+  const classes = useStyles();
   return (
     <div>
       <div className="conference video_app__container">
@@ -431,20 +548,62 @@ const Room = (props) => {
             >
               <div className="index--container--uI0r1">
                 <div className="index--body--3G2lS">
-                  <ServicesContainer>
-                    <ServicesWrapper>
-                      <ServicesCard
-                        muted
-                        ref={userVideo}
-                        autoPlay
-                        playsInline
-                      />
-
+                  <VideoContainer>
+                    <VideoWrapper>
+                      <VideoCard>
+                        <VideoStream
+                          muted
+                          ref={userVideo}
+                          autoPlay
+                          playsInline
+                        />
+                        <FooterContainer>
+                          <UserNameText>{capitalize(userName)}</UserNameText>
+                          <div className={classes.controls}>
+                            <div className={ videoFlag? classes.iconsEnabled : classes.iconsDisabled} onClick={playStop}>
+                              {videoFlag ? (
+                                <VideocamIcon className={classes.color} />
+                              ) : (
+                                <VideocamOffIcon className={classes.color} />
+                              )}
+                            </div>
+                            <div className={ audioFlag? classes.iconsEnabled : classes.iconsDisabled} onClick={muteUnmute}>
+                            
+                              {audioFlag ? (
+                                <MicIcon className={classes.color} />
+                              ) : (
+                                <MicOffIcon className={classes.color} />
+                              )}
+                            </div>
+                          </div>
+                        </FooterContainer>
+                      </VideoCard>
                       {peersRef.current.map((peer) => {
-                        return <Video key={peer.peerID} peer={peer.peer} />;
+                        let audioFlagTemp = true;
+                        let videoFlagTemp = true;
+                        if (userUpdate) {
+                          userUpdate.forEach((entry) => {
+                            if (
+                              peer &&
+                              peer.peerID &&
+                              peer.peerID === entry.id
+                            ) {
+                              audioFlagTemp = entry.audioFlag;
+                              videoFlagTemp = entry.videoFlag;
+                            }
+                          });
+                        }
+                        return (
+                          <Video
+                            key={peer.peerID}
+                            peer={peer}
+                            audioFlagTemp={audioFlagTemp}
+                            videoFlagTemp={videoFlagTemp}
+                          />
+                        );
                       })}
-                    </ServicesWrapper>
-                  </ServicesContainer>
+                    </VideoWrapper>
+                  </VideoContainer>
                 </div>
                 <span className="footer-link--footer-link--3EuAW">
                   <div className="footer-link--contents--1AXQE shared--outer-container--3eppq">
@@ -479,7 +638,7 @@ const Room = (props) => {
           }}
           message={errorMessage}
           actionText="Go Back"
-          action={() => leaveCall()}
+          action={() => goBack()}
           timer={timer}
         />
       )}

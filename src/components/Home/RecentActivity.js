@@ -24,15 +24,18 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: 20,
     width:'100%',
     alignSelf: 'center',
-
-
   },
+typo: {
+  display: 'flex',
+  alignItems:'center',
+},
   demo: {
     backgroundColor: '#f1f1f1',
   },
   title: {
     margin: theme.spacing(4, 0, 2),
     display: 'flex',
+    alignItems:'center',
   },
 }));
 
@@ -56,7 +59,7 @@ const history = useHistory();
           <div className={classes.demo}>
             <List dense= {true}>
                { recentActivitiesList?.length > 0 ?(recentActivitiesList.map(activity => (
-                <ListItem key = {activity.dateTime} onClick = {() => history.push(`/conference-room/${activity.meetingID}`)}>
+                <ListItem key = {activity.dateTime} onClick = {() => history.push({pathname: `/conference-room/${activity.meetingID}`, state: {host:activity.host}})}>
                 <ListItemAvatar>
                   <Avatar>
                    <Info/>
@@ -75,7 +78,7 @@ const history = useHistory();
           
                ))):
 
-               <p>No recent activity. Your recent meetings will be here</p> 
+               <p>No recent activity. Your recent meetings will appear here</p> 
             }
             </List>
           </div>
