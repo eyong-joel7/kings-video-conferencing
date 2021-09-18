@@ -57,6 +57,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 const Video = (props) => {
   const ref = useRef();
+  const userUpdate = props.userUpdate;
+  const socketRef  = props.socketRef;
+  const user = props.user;
+  console.log(user)
   useEffect(() => {
     props.peer.peer.on("stream", (stream) => {
       ref.current.srcObject = stream;
@@ -66,17 +70,26 @@ const Video = (props) => {
   function capitalize(s) {
     return s && s[0].toUpperCase() + s.slice(1);
   }
+  const togglePeerMedia = (command, peerID) => {
+  if(command && peerID){
+    socketRef.current.emit('admin playstop muteunmute', {
+      peerID,
+      command
+    })
+  }
+
+      }
   return (
     <VideoCard>
       <VideoStream playsInline autoPlay ref={ref} />
       <FooterContainer>
-        <UserNameText>{capitalize(props.peer.peerUsername)}</UserNameText>
+        <UserNameText>{capitalize(props.peer.peerUsername)}</UserNameText>                                                                                  
         <div className={classes.controls}>
-        {props.videoFlagTemp ? <div className={ props.videoFlagTemp? classes.iconsEnabled : classes.iconsDisabled}> <VideocamIcon className={classes.color} /> </div>:<div  className={ props.videoFlagTemp? classes.iconsEnabled : classes.iconsDisabled}> <VideocamOffIcon className={classes.color}/> </div> } 
-        {props.audioFlagTemp ? <div className={ props.audioFlagTemp? classes.iconsEnabled : classes.iconsDisabled}><MicIcon className={classes.color}/></div> : <div className={ props.audioFlagTemp? classes.iconsEnabled : classes.iconsDisabled}><MicOffIcon className={classes.color} /></div> } 
+        <div onClick = { () =>  user?.isAdmin && togglePeerMedia('video', props.peer.peerID)} className={ props.videoFlagTemp? classes.iconsEnabled : classes.iconsDisabled}>{props.videoFlagTemp ?  <VideocamIcon className={classes.color} /> :<VideocamOffIcon className={classes.color}/>} </div> 
+        <div onClick = {() => user?.isAdmin && togglePeerMedia('audio', props.peer.peerID)} className={ props.audioFlagTemp? classes.iconsEnabled : classes.iconsDisabled}>  {props.audioFlagTemp ?<MicIcon className={classes.color}/>:<MicOffIcon className={classes.color} />}</div> 
         </div>
       </FooterContainer>
-    </VideoCard>
+    </VideoCard>                                                                                                                   
   );
 };
 
@@ -105,6 +118,7 @@ const Room = (props) => {
   const [audioFlag, setAudioFlag] = useState(true);
   const [videoFlag, setVideoFlag] = useState(true);
   const [userUpdate, setUserUpdate] = useState([]);
+  const [remoteUpdate, setRemoteUpdate] = useState({});
 
   const [show, setShow] = useState(false);
   const [copyInfo, setCopyInfo] = useState(false);
@@ -145,9 +159,8 @@ const Room = (props) => {
     }
     if (cameraID) constraints.video["deviceId"] = cameraID;
     if (audioID) constraints.audio["deviceId"] = audioID;
-    console.log("constraints", constraints);
-
-    socketRef.current = io.connect(URL);
+    
+    socketRef.current = io.connect("http://localhost:5000");
     navigator.mediaDevices
       .getUserMedia(constraints)
       .then((stream) => {
@@ -237,6 +250,21 @@ const Room = (props) => {
         socketRef.current.on("change", (payload) => {
           setUserUpdate(payload);
         });
+
+        socketRef.current.on('admin playstop muteunmute', payload => {
+          setRemoteUpdate(payload);
+          if(payload.peerID === socketRef.current.id){
+            if(payload.command === 'audio'){
+              muteUnmute()
+            }
+           else if(payload.command === 'video'){
+            playStop()
+           }
+          }
+          console.log(payload, socketRef.current.id)
+        });
+
+      
 
         if (hiddenClass) {
           setIsToggled(true);
@@ -360,6 +388,7 @@ const Room = (props) => {
     socketRef.current?.destroy();
     window.location.replace("/");
   };
+ 
   const muteUnmute = () => {
     if (userVideo.current.srcObject) {
       userVideo.current.srcObject
@@ -561,6 +590,8 @@ const Room = (props) => {
                       {peersRef.current.map((peer) => {
                         let audioFlagTemp = true;
                         let videoFlagTemp = true;
+
+                        const user = users.find(user => user.name.toLowerCase() === userName.toLowerCase());
                         if (userUpdate) {
                           userUpdate.forEach((entry) => {
                             if (
@@ -579,6 +610,10 @@ const Room = (props) => {
                             peer={peer}
                             audioFlagTemp={audioFlagTemp}
                             videoFlagTemp={videoFlagTemp}
+                            userUpdate = {userUpdate}
+                            socketRef = {socketRef}
+                            user = {user}
+                            
                           />
                         );
                       })}
