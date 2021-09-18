@@ -160,7 +160,7 @@ const Room = (props) => {
     if (cameraID) constraints.video["deviceId"] = cameraID;
     if (audioID) constraints.audio["deviceId"] = audioID;
     
-    socketRef.current = io.connect("http://localhost:5000");
+    socketRef.current = io.connect(URL);
     navigator.mediaDevices
       .getUserMedia(constraints)
       .then((stream) => {
