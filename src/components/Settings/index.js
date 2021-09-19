@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+
 import React, { useEffect, useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import InputLabel from '@mui/material/InputLabel';
@@ -61,20 +61,37 @@ export default function SettingScreen({pageControl}) {
   const [audioOutputList, setAudioOutputList] = useState([]);
 
   useEffect(()=> {
+
     function getConnectedDevices(type, callback) {
         navigator.mediaDevices.enumerateDevices()
             .then(devices => {
                 const filtered = devices.filter(device => device.kind === type);
                 callback(filtered);
-                console.log("file",filtered)
             });
     }
-    getConnectedDevices('videoinput', cameras => setCameraList(cameras));
+    if(!selectedCamera){
+      getConnectedDevices('videoinput', cameras => setCameraList(cameras));
+      const defaultCamera = localStorage.getItem(SELECTED_CAMERA_DEVICE_ID);
+      const camIndex =  defaultCamera && cameraList.findIndex(camera => camera.deviceId === defaultCamera);
+      if(camIndex>-1) setSelectedCamera(cameraList[camIndex]?.deviceId)
+    }
+   if(!selectedMic){
     getConnectedDevices('audiooutput', devices => setAudioOutputList(devices));
-    setSelectedCamera(cameraList[0]?.label)
+    const defaultMic = localStorage.getItem(SELECTED_MIC_DEVICE_ID);
+    const micIndex =  defaultMic && audioList.findIndex(mic => mic.deviceId === defaultMic);
+    if(micIndex>-1) setSelectedMic(audioList[micIndex]?.deviceId)
+   }
+   if(!selectedSpeaker){
     getConnectedDevices('audioinput', mics => setAudioList(mics));
-    setSelectedMic(audioList[0]?.label)
-  },[])
+    const defaultSpeaker = localStorage.getItem(SELECTED_SPEAKER_DEVICE_ID);
+    const speakerIndex =  defaultSpeaker && audioOutputList.findIndex(speaker => speaker.deviceId === defaultSpeaker);
+    if(speakerIndex>-1) setSelectedSpeaker(audioOutputList[speakerIndex]?.deviceId)
+   }
+    
+   
+  
+  },[audioList, audioOutputList, cameraList, selectedCamera, selectedMic, selectedSpeaker])
+
 
 const handleClose = () => {pageControl('home')}
 const handleChange = (event) => {
@@ -93,9 +110,9 @@ const handleChangeSpeaker = (event) => {
   device_id && localStorage.setItem(SELECTED_SPEAKER_DEVICE_ID, device_id )
 };
 
+
   return (
     <Container className = {classes.root} component="main">
-       
       <CssBaseline />
      <div onClick = {handleClose} style = {{display: 'flex', alignItems:'center',cursor:'pointer'}}> <ChevronLeft/><span>Back</span></div>
       <div className={classes.paper}>
@@ -111,7 +128,7 @@ const handleChangeSpeaker = (event) => {
         <Select
           labelId="cameras"
           id="cameras"
-          value={selectedCamera}
+          value={selectedCamera?selectedCamera:''}
           label="Connected Cameras"
           onChange={handleChange}
         >
@@ -132,7 +149,7 @@ const handleChangeSpeaker = (event) => {
         <Select
           labelId="mics"
           id="mics"
-          value={selectedMic}
+          value={selectedMic ? selectedMic : ''}
           label="Connected Microphones"
           onChange={handleChangeMic}
         >
@@ -152,7 +169,7 @@ const handleChangeSpeaker = (event) => {
         <Select
           labelId="mics"
           id="mics"
-          value={selectedSpeaker}
+          value={selectedSpeaker?selectedSpeaker:''}
           label="Connected Output Devices"
           onChange={handleChangeSpeaker}
         >
