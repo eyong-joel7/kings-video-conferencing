@@ -31,6 +31,7 @@ import {
   VideoStream,
   VideoWrapper,
 } from "./roomElements";
+import LoadingBackdrop from "./LoadingBackdrop";
 
 const useStyles = makeStyles((theme) => ({
   color: {
@@ -126,6 +127,7 @@ const Room = (props) => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
+  const [open, setOpen] = useState(false);
 
   const location = useLocation();
   const hiddenClass = useMediaQuery({
@@ -160,6 +162,7 @@ const Room = (props) => {
   const URL = "https://kings-video-conferencing.herokuapp.com/";
   // "/http://localhost:5000"
   useEffect(() => {
+    setOpen(true);
     if (!roomID || !userName) {
       // Need to inform the user of this before executing redirect
       history.push("/");
@@ -171,6 +174,7 @@ const Room = (props) => {
     navigator.mediaDevices
       .getUserMedia(constraints)
       .then((stream) => {
+        setOpen(false);
         userVideo.current.srcObject = stream;
         setStream(stream);
         !host &&
@@ -693,6 +697,7 @@ const Room = (props) => {
           timer={timer}
         />
       )}
+      <LoadingBackdrop open = {open}/>
     </div>
   );
 };
