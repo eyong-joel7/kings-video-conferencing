@@ -32,6 +32,7 @@ import {
   VideoWrapper,
 } from "./roomElements";
 import LoadingBackdrop from "./LoadingBackdrop";
+import { AudioPlayer } from "./AudioPlayer";
 
 const useStyles = makeStyles((theme) => ({
   color: {
@@ -128,6 +129,9 @@ const Room = (props) => {
   const [messages, setMessages] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [open, setOpen] = useState(false);
+  const [playMusic, setPlayMusic] = useState(false);
+
+ const music = document.getElementById("music");
 
   const location = useLocation();
   const hiddenClass = useMediaQuery({
@@ -177,6 +181,7 @@ const Room = (props) => {
         setOpen(false);
         userVideo.current.srcObject = stream;
         setStream(stream);
+      
         !host &&
           socketRef.current.emit("join room", { roomID, userName }, (error) => {
             if (error) {
@@ -283,7 +288,7 @@ const Room = (props) => {
       })
       .catch(function (error) {
         setShow(true);
-
+        setOpen(false);
         if (error.name === "ConstraintNotSatisfiedError") {
           setErrorMessage("The resolution is not supported by your device.");
         } else if (error.name === "PermissionDeniedError") {
@@ -534,6 +539,8 @@ const Room = (props) => {
     main__video_button.current.innerHTML = html;
   };
   const classes = useStyles();
+  if (stream) peersRef.current.length>0 ? music.pause() : music.play(); 
+  console.log(peersRef.current);
   return (
     <div>
       <div className="conference video_app__container">
@@ -698,6 +705,7 @@ const Room = (props) => {
         />
       )}
       <LoadingBackdrop open = {open}/>
+      <AudioPlayer />
     </div>
   );
 };
