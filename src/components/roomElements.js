@@ -54,6 +54,7 @@ export const VideoCard = styled.div`
 export const VideoStream = styled.video`
   height: 100%;
   width: 100%;
+  max-height: 350px;
   @media screen and (max-width: 786px) {
   }
 `;

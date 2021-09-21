@@ -13,7 +13,7 @@ const Cop2CB = ({
     if (timer) {
       const timer1 = setTimeout(() => {
         handleClose();
-      }, 1500);
+      }, 1000);
       return () => clearTimeout(timer1);
     }
   }, [handleClose, timer]);

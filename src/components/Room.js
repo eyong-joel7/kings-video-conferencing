@@ -33,6 +33,7 @@ import {
 } from "./roomElements";
 import LoadingBackdrop from "./LoadingBackdrop";
 import { AudioPlayer } from "./AudioPlayer";
+import Video from "./VideoPlayer";
 
 const useStyles = makeStyles((theme) => ({
   color: {
@@ -40,61 +41,24 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "1rem",
   },
 
-  iconsEnabled:{
-    backgroundColor: '#1a3050',
-    borderRadius: '50%',
-    padding: '5px',
-    margin: '0 2px',
+  iconsEnabled: {
+    backgroundColor: "#1a3050",
+    borderRadius: "50%",
+    padding: "5px",
+    margin: "0 2px",
   },
-  iconsDisabled:{
-    backgroundColor: 'red',
-    borderRadius: '50%',
-    padding: '5px',
-    margin: '0 2px',
+  iconsDisabled: {
+    backgroundColor: "red",
+    borderRadius: "50%",
+    padding: "5px",
+    margin: "0 2px",
   },
   controls: {
     display: "flex",
     justifyContent: "space-between",
   },
 }));
-const Video = (props) => {
-  const ref = useRef();
-  const userUpdate = props.userUpdate;
-  const socketRef  = props.socketRef;
-  const user = props.user;
-  useEffect(() => {
-    props.peer.peer.on("stream", (stream) => {
-      ref.current.srcObject = stream;
-    });
-  }, []);
-  const classes = useStyles();
-  function capitalize(s) {
-    return s && s[0].toUpperCase() + s.slice(1);
-  }
-  const togglePeerMedia = (command, peerID, userUpdate) => {
-  if(command && peerID){
-    socketRef.current.emit('admin playstop muteunmute', {
-      peerID,
-      command,
-      userUpdate
-    })
-  }
 
-      }
-      console.log(props)
-  return (
-    <VideoCard>
-      <VideoStream playsInline autoPlay ref={ref} />
-      <FooterContainer>
-        <UserNameText>{capitalize(props.peer.peerUsername)}</UserNameText>                                                                                  
-        <div className={classes.controls}>
-        <div onClick = { () =>  user?.isAdmin && togglePeerMedia('video', props.peer.peerID, props.userUpdate)} className={ props.videoFlagTemp? classes.iconsEnabled : classes.iconsDisabled}>{props.videoFlagTemp ?  <VideocamIcon className={classes.color} /> :<VideocamOffIcon className={classes.color}/>} </div> 
-        <div onClick = {() => user?.isAdmin && togglePeerMedia('audio', props.peer.peerID, props.userUpdate)} className={ props.audioFlagTemp? classes.iconsEnabled : classes.iconsDisabled}>  {props.audioFlagTemp ?<MicIcon className={classes.color}/>:<MicOffIcon className={classes.color} />}</div> 
-        </div>
-      </FooterContainer>
-    </VideoCard>                                                                                                                   
-  );
-};
 
 const Room = (props) => {
   const cameraID = localStorage.getItem(SELECTED_CAMERA_DEVICE_ID);
@@ -131,7 +95,7 @@ const Room = (props) => {
   const [open, setOpen] = useState(false);
   const [playMusic, setPlayMusic] = useState(false);
 
- const music = document.getElementById("music");
+  const music = document.getElementById("music");
 
   const location = useLocation();
   const hiddenClass = useMediaQuery({
@@ -156,11 +120,13 @@ const Room = (props) => {
   const room = location.state?.roomid || getUrl;
   const roomID = room?.trim().toLowerCase();
 
-    const storedActivityList = JSON.parse(
-      localStorage.getItem(RECENT_ACTIVITIES)
-    );
-    const activity = storedActivityList && storedActivityList.find(activity => activity.meetingID === roomID)
-   
+  const storedActivityList = JSON.parse(
+    localStorage.getItem(RECENT_ACTIVITIES)
+  );
+  const activity =
+    storedActivityList &&
+    storedActivityList.find((activity) => activity.meetingID === roomID);
+
   const host = location.state?.host || activity?.host;
 
   const URL = "https://kings-video-conferencing.herokuapp.com/";
@@ -173,7 +139,7 @@ const Room = (props) => {
     }
     if (cameraID) constraints.video["deviceId"] = cameraID;
     if (audioID) constraints.audio["deviceId"] = audioID;
-    
+
     socketRef.current = io.connect(URL);
     navigator.mediaDevices
       .getUserMedia(constraints)
@@ -181,7 +147,7 @@ const Room = (props) => {
         setOpen(false);
         userVideo.current.srcObject = stream;
         setStream(stream);
-      
+
         !host &&
           socketRef.current.emit("join room", { roomID, userName }, (error) => {
             if (error) {
@@ -266,20 +232,18 @@ const Room = (props) => {
           setUserUpdate(payload);
         });
 
-        socketRef.current.on('admin playstop muteunmute', payload => {
-          if(payload.peerID === socketRef.current.id){
-      payload.userUpdate &&  setUserUpdate([...payload.userUpdate]);
-            if(payload.command === 'audio'){
-              console.log('audio clicked')
-              muteUnmute()
+        socketRef.current.on("admin playstop muteunmute", (payload) => {
+          if (payload.peerID === socketRef.current.id) {
+            payload.userUpdate && setUserUpdate([...payload.userUpdate]);
+            if (payload.command === "audio") {
+              console.log("audio clicked");
+              muteUnmute();
             }
-           if(payload.command === 'video'){
-            playStop()
-           }
+            if (payload.command === "video") {
+              playStop();
+            }
           }
         });
-
-      
 
         if (hiddenClass) {
           setIsToggled(true);
@@ -347,10 +311,13 @@ const Room = (props) => {
     event.preventDefault();
     if (message) {
       const user = users.find(
-        (user) => user.name.trim().toLowerCase() === userName.trim().toLowerCase()
+        (user) =>
+          user.name.trim().toLowerCase() === userName.trim().toLowerCase()
       );
-      socketRef.current.emit("sendMessage", { message, userID: user?.id, recipient }, () =>
-        setMessage("")
+      socketRef.current.emit(
+        "sendMessage",
+        { message, userID: user?.id, recipient },
+        () => setMessage("")
       );
     }
   };
@@ -385,12 +352,13 @@ const Room = (props) => {
         (activity) => activity.meetingID === roomID
       );
       if (currentMeetingDetails) {
-        newList = storedActivityList.map(
-          (listItem) => listItem.meetingID !== roomID ? listItem : Object.assign({}, listItem, {dateTime:dateTime})
+        newList = storedActivityList.map((listItem) =>
+          listItem.meetingID !== roomID
+            ? listItem
+            : Object.assign({}, listItem, { dateTime: dateTime })
         );
         localStorage.setItem(RECENT_ACTIVITIES, JSON.stringify(newList));
       } else {
-       
         localStorage.setItem(
           RECENT_ACTIVITIES,
           JSON.stringify([...storedActivityList, newActivity])
@@ -402,109 +370,116 @@ const Room = (props) => {
     socketRef.current?.destroy();
     window.location.replace("/");
   };
- 
+
   const muteUnmute = () => {
     if (userVideo.current.srcObject) {
-      const updateExist = userUpdate.find(obj => obj.id === socketRef.current.id);
-      userVideo.current.srcObject
-        .getTracks()
-        .forEach(function (track) {
-          if (track.kind === "audio") {
-            if (track.enabled) {
-              if(updateExist){
-                const userUpdateTemp = userUpdate.map(updateObj => updateObj.id!==socketRef.current.id? updateObj : Object.assign({}, updateObj, {audioFlag: false}) )
-                socketRef.current.emit("change", userUpdateTemp)
-              }
-              else {
-                socketRef.current.emit("change", [
-                  ...userUpdate,
-                  {
-                    id: socketRef.current.id,
-                    videoFlag,
-                    audioFlag: false,
-                  },
-                ]);
-              }
-              track.enabled = false;
-              setAudioFlag(false);
-              setUnmuteButton();
+      const updateExist = userUpdate.find(
+        (obj) => obj.id === socketRef.current.id
+      );
+      userVideo.current.srcObject.getTracks().forEach(function (track) {
+        if (track.kind === "audio") {
+          if (track.enabled) {
+            if (updateExist) {
+              const userUpdateTemp = userUpdate.map((updateObj) =>
+                updateObj.id !== socketRef.current.id
+                  ? updateObj
+                  : Object.assign({}, updateObj, { audioFlag: false })
+              );
+              socketRef.current.emit("change", userUpdateTemp);
             } else {
-              if(updateExist){
-                const userUpdateTemp = userUpdate.map(updateObj => updateObj.id!==socketRef.current.id? updateObj : Object.assign({}, updateObj, {audioFlag: true}) )
-                socketRef.current.emit("change", userUpdateTemp)
-              }
-              else {
-                socketRef.current.emit("change", [
-                  ...userUpdate,
-                  {
-                    id: socketRef.current.id,
-                    videoFlag,
-                    audioFlag: true,
-                  },
-                ]);
-
-
-              }
-              track.enabled = true;
-              setAudioFlag(true);
-              setMuteButton();
+              socketRef.current.emit("change", [
+                ...userUpdate,
+                {
+                  id: socketRef.current.id,
+                  videoFlag,
+                  audioFlag: false,
+                },
+              ]);
             }
+            track.enabled = false;
+            setAudioFlag(false);
+            setUnmuteButton();
+          } else {
+            if (updateExist) {
+              const userUpdateTemp = userUpdate.map((updateObj) =>
+                updateObj.id !== socketRef.current.id
+                  ? updateObj
+                  : Object.assign({}, updateObj, { audioFlag: true })
+              );
+              socketRef.current.emit("change", userUpdateTemp);
+            } else {
+              socketRef.current.emit("change", [
+                ...userUpdate,
+                {
+                  id: socketRef.current.id,
+                  videoFlag,
+                  audioFlag: true,
+                },
+              ]);
+            }
+            track.enabled = true;
+            setAudioFlag(true);
+            setMuteButton();
           }
-        });
-    };
-
+        }
+      });
+    }
   };
 
   const playStop = () => {
-      if (userVideo.current.srcObject) {
-        const updateExist = userUpdate.find(obj => obj.id === socketRef.current.id);
-        userVideo.current.srcObject
-          .getTracks()
-          .forEach(function (track) {
-            if (track.kind === "video") {
-              if (track.enabled) {
-                if(updateExist){
-                  const userUpdateTemp = userUpdate.map(updateObj => updateObj.id!==socketRef.current.id? updateObj : Object.assign({}, updateObj, {videoFlag: false}) )
-                  socketRef.current.emit("change", userUpdateTemp)
-                }
-                else {
-                  socketRef.current.emit("change", [
-                    ...userUpdate,
-                    {
-                      id: socketRef.current.id,
-                      videoFlag: false,
-                      audioFlag,
-                    },
-                  ]);
-                }
-                track.enabled = false;
-                setVideoFlag(false);
-                setPlayVideo()
-              } else {
-                if(updateExist){
-                  const userUpdateTemp = userUpdate.map(updateObj => updateObj.id!==socketRef.current.id? updateObj : Object.assign({}, updateObj, {videoFlag: true}) )
-                  socketRef.current.emit("change", userUpdateTemp)
-                }
-                else {
-                  socketRef.current.emit("change", [
-                    ...userUpdate,
-                    {
-                      id: socketRef.current.id,
-                      videoFlag: true,
-                      audioFlag,
-                    },
-                  ]);
-                }
-              
-              
-                track.enabled = true;
-                setVideoFlag(true);
-                setStopVideo()
-              }
+    if (userVideo.current.srcObject) {
+      const updateExist = userUpdate.find(
+        (obj) => obj.id === socketRef.current.id
+      );
+      userVideo.current.srcObject.getTracks().forEach(function (track) {
+        if (track.kind === "video") {
+          if (track.enabled) {
+            if (updateExist) {
+              const userUpdateTemp = userUpdate.map((updateObj) =>
+                updateObj.id !== socketRef.current.id
+                  ? updateObj
+                  : Object.assign({}, updateObj, { videoFlag: false })
+              );
+              socketRef.current.emit("change", userUpdateTemp);
+            } else {
+              socketRef.current.emit("change", [
+                ...userUpdate,
+                {
+                  id: socketRef.current.id,
+                  videoFlag: false,
+                  audioFlag,
+                },
+              ]);
             }
-          });
-      };
+            track.enabled = false;
+            setVideoFlag(false);
+            setPlayVideo();
+          } else {
+            if (updateExist) {
+              const userUpdateTemp = userUpdate.map((updateObj) =>
+                updateObj.id !== socketRef.current.id
+                  ? updateObj
+                  : Object.assign({}, updateObj, { videoFlag: true })
+              );
+              socketRef.current.emit("change", userUpdateTemp);
+            } else {
+              socketRef.current.emit("change", [
+                ...userUpdate,
+                {
+                  id: socketRef.current.id,
+                  videoFlag: true,
+                  audioFlag,
+                },
+              ]);
+            }
 
+            track.enabled = true;
+            setVideoFlag(true);
+            setStopVideo();
+          }
+        }
+      });
+    }
   };
 
   const setMuteButton = () => {
@@ -539,7 +514,7 @@ const Room = (props) => {
     main__video_button.current.innerHTML = html;
   };
   const classes = useStyles();
-  if (stream) peersRef.current.length>0 ? music.pause() : music.play(); 
+  if (stream) peersRef.current.length > 0 ? music.pause() : music.play();
   console.log(peersRef.current);
   return (
     <div>
@@ -561,7 +536,7 @@ const Room = (props) => {
                 messages={messages}
                 setMessage={setMessage}
                 name={userName}
-                users = {users}
+                users={users}
               />
             ) : selected === "users" ? (
               <Participants toggleControls={toggleHamburger} users={users} />
@@ -616,15 +591,28 @@ const Room = (props) => {
                         <FooterContainer>
                           <UserNameText>{capitalize(userName)}</UserNameText>
                           <div className={classes.controls}>
-                            <div className={ videoFlag? classes.iconsEnabled : classes.iconsDisabled} onClick={playStop}>
+                            <div
+                              className={
+                                videoFlag
+                                  ? classes.iconsEnabled
+                                  : classes.iconsDisabled
+                              }
+                              onClick={playStop}
+                            >
                               {videoFlag ? (
                                 <VideocamIcon className={classes.color} />
                               ) : (
                                 <VideocamOffIcon className={classes.color} />
                               )}
                             </div>
-                            <div className={ audioFlag? classes.iconsEnabled : classes.iconsDisabled} onClick={muteUnmute}>
-                            
+                            <div
+                              className={
+                                audioFlag
+                                  ? classes.iconsEnabled
+                                  : classes.iconsDisabled
+                              }
+                              onClick={muteUnmute}
+                            >
                               {audioFlag ? (
                                 <MicIcon className={classes.color} />
                               ) : (
@@ -638,7 +626,10 @@ const Room = (props) => {
                         let audioFlagTemp = true;
                         let videoFlagTemp = true;
 
-                        const user = users.find(user => user.name.toLowerCase() === userName.toLowerCase());
+                        const user = users.find(
+                          (user) =>
+                            user.name.toLowerCase() === userName.toLowerCase()
+                        );
                         if (userUpdate) {
                           userUpdate.forEach((entry) => {
                             if (
@@ -657,10 +648,9 @@ const Room = (props) => {
                             peer={peer}
                             audioFlagTemp={audioFlagTemp}
                             videoFlagTemp={videoFlagTemp}
-                            userUpdate = {userUpdate}
-                            socketRef = {socketRef}
-                            user = {user}
-                            
+                            userUpdate={userUpdate}
+                            socketRef={socketRef}
+                            user={user}
                           />
                         );
                       })}
@@ -704,7 +694,7 @@ const Room = (props) => {
           timer={timer}
         />
       )}
-      <LoadingBackdrop open = {open}/>
+      <LoadingBackdrop open={open} />
       <AudioPlayer />
     </div>
   );
