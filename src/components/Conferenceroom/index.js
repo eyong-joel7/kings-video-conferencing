@@ -6,13 +6,13 @@ import Peer from "simple-peer";
 
 import { useHistory, useLocation } from "react-router";
 import { useMediaQuery } from "react-responsive";
-import MainControls from "./MainControls";
-import Participants from "./Participants";
-import Chat from "./ChatComponents/Chat/Chat";
-import NotificationModal from "./Modals";
-import "../components/Conferenceroom/conferenceElements.css";
-import Cop2CB from "./Modals/Copy2C";
-import { RECENT_ACTIVITIES } from "../CONSTANTS";
+import MainControls from "../MainControls";
+import Participants from "../Participants";
+import Chat from "../ChatComponents/Chat/Chat";
+import NotificationModal from "../Modals";
+import "./conferenceElements.css";
+import Cop2CB from "../Modals/Copy2C";
+import { RECENT_ACTIVITIES } from "../../CONSTANTS";
 
 import MicOffIcon from "@mui/icons-material/MicOff";
 import MicIcon from "@mui/icons-material/Mic";
@@ -22,7 +22,7 @@ import { makeStyles } from "@material-ui/styles";
 import {
   SELECTED_CAMERA_DEVICE_ID,
   SELECTED_MIC_DEVICE_ID,
-} from "../CONSTANTS";
+} from "../../CONSTANTS";
 import {
   FooterContainer,
   UserNameText,
@@ -30,10 +30,11 @@ import {
   VideoContainer,
   VideoStream,
   VideoWrapper,
-} from "./roomElements";
-import LoadingBackdrop from "./LoadingBackdrop";
-import { AudioPlayer } from "./AudioPlayer";
+} from "./conferenceRoomElements";
+import LoadingBackdrop from "../LoadingBackdrop";
 import Video from "./VideoPlayer";
+import {AudioPlayer} from "./AudioPlayer";
+import capitalize from "../../utils/capitalize";
 
 const useStyles = makeStyles((theme) => ({
   color: {
@@ -60,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const Room = (props) => {
+const ConferenceRoom = (props) => {
   const cameraID = localStorage.getItem(SELECTED_CAMERA_DEVICE_ID);
   const audioID = localStorage.getItem(SELECTED_MIC_DEVICE_ID);
   const constraints = {
@@ -105,9 +106,7 @@ const Room = (props) => {
     setIsToggled(!isToggled);
   };
 
-  function capitalize(s) {
-    return s && s[0].toUpperCase() + s.slice(1);
-  }
+
 
   const closeNav = () => {
     if (!hiddenClass && isToggled) {
@@ -130,7 +129,7 @@ const Room = (props) => {
   const host = location.state?.host || activity?.host;
 
   const URL = "https://kings-video-conferencing.herokuapp.com/";
-  // "/http://localhost:5000"
+
   useEffect(() => {
     setOpen(true);
     if (!roomID || !userName) {
@@ -700,4 +699,4 @@ const Room = (props) => {
   );
 };
 
-export default Room;
+export default ConferenceRoom;

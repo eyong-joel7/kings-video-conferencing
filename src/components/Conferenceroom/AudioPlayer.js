@@ -1,5 +1,5 @@
 import React from "react";
-import WhenWePray from '../media/WHEN-WE-PRAY.mp3'
+import WhenWePray from '../../media/WHEN-WE-PRAY.mp3'
 export const AudioPlayer = () => {
   return (
     <div id="content-container" style = {{height:'0px', visibility:'hidden'}}>

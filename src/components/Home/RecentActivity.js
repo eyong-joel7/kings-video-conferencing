@@ -32,6 +32,10 @@ typo: {
   demo: {
     backgroundColor: '#f1f1f1',
   },
+  span:{
+marginLeft: 10,
+  },
+
   title: {
     margin: theme.spacing(4, 0, 2),
     display: 'flex',
@@ -53,12 +57,12 @@ const history = useHistory();
           
           <Typography variant="h6" className={classes.title}>
           <HistoryIcon />
-         <span> Recent meetings </span>
+         <span className = {classes.span}> Recent meetings </span>
           </Typography>
           <Divider/>
           <div className={classes.demo}>
             <List dense= {true}>
-               { recentActivitiesList?.length > 0 ?(recentActivitiesList.map(activity => (
+               { recentActivitiesList?.length > 0 ?(recentActivitiesList.sort((a,b) => -1).map(activity => (
                 <ListItem key = {activity.dateTime} onClick = {() => history.push({pathname: `/conference-room/${activity.meetingID}`, state: {host:activity.host}})}>
                 <ListItemAvatar>
                   <Avatar>

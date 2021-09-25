@@ -4,7 +4,7 @@ import MicIcon from "@mui/icons-material/Mic";
 import VideocamIcon from "@mui/icons-material/Videocam";
 import VideocamOffIcon from "@mui/icons-material/VideocamOff";
 import { makeStyles } from "@material-ui/styles";
-import { FooterContainer, UserNameText, VideoCard, VideoStream } from "../roomElements";
+import { FooterContainer, UserNameText, VideoCard, VideoStream } from "../conferenceRoomElements";
 
 
 const useStyles = makeStyles((theme) => ({
