@@ -11,12 +11,11 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
-export default function DialogSelect({open, setOpen, peers, setDisplayUser}) {
+export default function DialogSelect({open, setOpen, peers, setDisplayUser, displayUser}) {
  
-  const [selectedUser, setSelectedUser] = React.useState('');
+
 
   const handleChange = (event) => {
-   setSelectedUser(event.target.value || '');
    setDisplayUser(event.target.value || '');
   };
 
@@ -38,7 +37,7 @@ export default function DialogSelect({open, setOpen, peers, setDisplayUser}) {
               <Select
                 labelId="demo-dialog-select-label"
                 id="demo-dialog-select"
-                value={selectedUser}
+                value={displayUser}
                 onChange={handleChange}
                 input={<OutlinedInput label="Choose" />}
               >

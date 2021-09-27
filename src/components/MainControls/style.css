@@ -62,7 +62,7 @@
     }
 }
 .leave{
-    background-color: #EB534B;
+    background-color: #ff0000;
     border-radius: 10px;
     margin: 10px 0;
 }
@@ -127,8 +127,14 @@ opacity: 0.8;
 
 
 .main__controls .dropdown{
-    margin-top: -100px;
+    margin-top: -200px;
     background-color: #0d203b;
     padding: 15px;
     z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 200px;
+    height: 120px;
+
 }

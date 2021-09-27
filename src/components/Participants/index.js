@@ -3,7 +3,7 @@ import './participants.css';
 import SimpleList from './ReactList';
 import SearchAppBar from './AppBar'
 
-const Participants = ({toggleControls, users}) => {
+const Participants = ({toggleControls, users, user, setSelected, setDisplayUser}) => {
   const [usersList, setUserList]  = useState([])
   useEffect(() => {
     setUserList([...users]);
@@ -17,7 +17,7 @@ const Participants = ({toggleControls, users}) => {
       users
         ? (
           <>
-           <SimpleList users = {usersList}/>
+           <SimpleList setDisplayUser = {setDisplayUser} setSelected = {setSelected} users = {usersList} user = {user}/>
           </>
         )
         : null

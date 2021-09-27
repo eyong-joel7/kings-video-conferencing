@@ -33,8 +33,8 @@ import {
 } from "./conferenceRoomElements";
 import LoadingBackdrop from "../LoadingBackdrop";
 import Video from "./VideoPlayer";
-import {AudioPlayer} from "./AudioPlayer";
-import capitalize from "../../utils/capitalize";
+import { AudioPlayer } from "./AudioPlayer";
+import BackgroundLetterAvatars from "../StringAvatar";
 
 const useStyles = makeStyles((theme) => ({
   color: {
@@ -60,7 +60,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
 const ConferenceRoom = (props) => {
   const cameraID = localStorage.getItem(SELECTED_CAMERA_DEVICE_ID);
   const audioID = localStorage.getItem(SELECTED_MIC_DEVICE_ID);
@@ -82,6 +81,7 @@ const ConferenceRoom = (props) => {
   const [stream, setStream] = useState();
   const [isToggled, setIsToggled] = useState(false);
   const [selected, setSelected] = useState("");
+  const [displayUser, setDisplayUser] = useState("");
 
   const [audioFlag, setAudioFlag] = useState(true);
   const [videoFlag, setVideoFlag] = useState(true);
@@ -94,7 +94,7 @@ const ConferenceRoom = (props) => {
   const [messages, setMessages] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [open, setOpen] = useState(false);
-  const [playMusic, setPlayMusic] = useState(false);
+  const [isNewMessage, setIsNewMessage] = useState(false);
 
   const music = document.getElementById("music");
 
@@ -104,9 +104,9 @@ const ConferenceRoom = (props) => {
   });
   const toggleHamburger = () => {
     setIsToggled(!isToggled);
+    setSelected('');
+ 
   };
-
-
 
   const closeNav = () => {
     if (!hiddenClass && isToggled) {
@@ -132,13 +132,13 @@ const ConferenceRoom = (props) => {
 
   useEffect(() => {
     setOpen(true);
-    if (!roomID || !userName) {
-      // Need to inform the user of this before executing redirect
-      history.push("/");
+    if (!roomID) history.push("/");
+    else if (!userName) {
+      history.push(`/?redirect = ${roomID}`);
     }
     if (cameraID) constraints.video["deviceId"] = cameraID;
     if (audioID) constraints.audio["deviceId"] = audioID;
-
+// 'http://localhost:5000/'
     socketRef.current = io.connect(URL);
     navigator.mediaDevices
       .getUserMedia(constraints)
@@ -146,7 +146,6 @@ const ConferenceRoom = (props) => {
         setOpen(false);
         userVideo.current.srcObject = stream;
         setStream(stream);
-
         !host &&
           socketRef.current.emit("join room", { roomID, userName }, (error) => {
             if (error) {
@@ -221,6 +220,7 @@ const ConferenceRoom = (props) => {
             setTimer(true);
             setShow(true);
           }
+        if(user !== userName) setIsNewMessage(true);
         });
 
         socketRef.current.on("roomData", ({ users }) => {
@@ -315,7 +315,7 @@ const ConferenceRoom = (props) => {
       );
       socketRef.current.emit(
         "sendMessage",
-        { message, userID: user?.id, recipient },
+        { message, userID: user?.id, recipient},
         () => setMessage("")
       );
     }
@@ -514,7 +514,10 @@ const ConferenceRoom = (props) => {
   };
   const classes = useStyles();
   if (stream) peersRef.current.length > 0 ? music.pause() : music.play();
-  console.log(peersRef.current);
+  let isVideoEnabled =
+    userVideo.current?.srcObject?.getVideoTracks()[0]?.enabled;
+    console.log('selected2',selected)
+
   return (
     <div>
       <div className="conference video_app__container">
@@ -536,9 +539,19 @@ const ConferenceRoom = (props) => {
                 setMessage={setMessage}
                 name={userName}
                 users={users}
+                setIsNewMessage = {setIsNewMessage}
+                displayUser={displayUser}
+                setDisplayUser={setDisplayUser}
               />
             ) : selected === "users" ? (
-              <Participants toggleControls={toggleHamburger} users={users} />
+              <Participants
+                setSelected={setSelected}
+                toggleControls={toggleHamburger}
+                users={users}
+                user={userName}
+                displayUser ={displayUser}
+                setDisplayUser = {setDisplayUser}
+              />
             ) : null}
           </div>
         </nav>
@@ -581,46 +594,58 @@ const ConferenceRoom = (props) => {
                   <VideoContainer>
                     <VideoWrapper>
                       <VideoCard>
+                        {stream && !isVideoEnabled && (
+                          <BackgroundLetterAvatars name={userName} />
+                        )}
                         <VideoStream
+                          style={{
+                            display:
+                              stream && isVideoEnabled ? "block" : "none",
+                          }}
                           muted
                           ref={userVideo}
                           autoPlay
                           playsInline
                         />
-                        <FooterContainer>
-                          <UserNameText>{capitalize(userName)}</UserNameText>
-                          <div className={classes.controls}>
-                            <div
-                              className={
-                                videoFlag
-                                  ? classes.iconsEnabled
-                                  : classes.iconsDisabled
-                              }
-                              onClick={playStop}
-                            >
-                              {videoFlag ? (
-                                <VideocamIcon className={classes.color} />
-                              ) : (
-                                <VideocamOffIcon className={classes.color} />
-                              )}
+                        {stream && (
+                          <FooterContainer>
+                            <UserNameText>
+                              {userName.toLowerCase()}
+                            </UserNameText>
+                            <div className={classes.controls}>
+                              <div
+                                className={
+                                  videoFlag
+                                    ? classes.iconsEnabled
+                                    : classes.iconsDisabled
+                                }
+                                onClick={playStop}
+                              >
+                                {videoFlag ? (
+                                  <VideocamIcon className={classes.color} />
+                                ) : (
+                                  <VideocamOffIcon className={classes.color} />
+                                )}
+                              </div>
+                              <div
+                                className={
+                                  audioFlag
+                                    ? classes.iconsEnabled
+                                    : classes.iconsDisabled
+                                }
+                                onClick={muteUnmute}
+                              >
+                                {audioFlag ? (
+                                  <MicIcon className={classes.color} />
+                                ) : (
+                                  <MicOffIcon className={classes.color} />
+                                )}
+                              </div>
                             </div>
-                            <div
-                              className={
-                                audioFlag
-                                  ? classes.iconsEnabled
-                                  : classes.iconsDisabled
-                              }
-                              onClick={muteUnmute}
-                            >
-                              {audioFlag ? (
-                                <MicIcon className={classes.color} />
-                              ) : (
-                                <MicOffIcon className={classes.color} />
-                              )}
-                            </div>
-                          </div>
-                        </FooterContainer>
+                          </FooterContainer>
+                        )}
                       </VideoCard>
+
                       {peersRef.current.map((peer) => {
                         let audioFlagTemp = true;
                         let videoFlagTemp = true;
@@ -661,6 +686,9 @@ const ConferenceRoom = (props) => {
                     <MainControls
                       toggleHamburger={toggleHamburger}
                       setSelected={setSelected}
+                      selected = {selected}
+                      isNewMessage = {isNewMessage}
+                      setIsNewMessage = {setIsNewMessage}
                       setCopyInfo={setCopyInfo}
                       playStop={playStop}
                       muteUnmute={muteUnmute}

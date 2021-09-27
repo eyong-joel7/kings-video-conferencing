@@ -52,6 +52,7 @@ export const VideoCard = styled.div`
 `;
 
 export const VideoStream = styled.video`
+
   height: 100%;
   width: 100%;
   max-height: 350px;
@@ -73,6 +74,7 @@ export const UserNameText = styled.h4`
   color: #f1f1f1;
   text-align: left;
   font-weight: bold;
+  text-transform: capitalize;
   padding: 0 10px;
   @media screen and (max-width: 768px) {
     font-size: 1.4rem;

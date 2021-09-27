@@ -5,6 +5,7 @@ import VideocamIcon from "@mui/icons-material/Videocam";
 import VideocamOffIcon from "@mui/icons-material/VideocamOff";
 import { makeStyles } from "@material-ui/styles";
 import { FooterContainer, UserNameText, VideoCard, VideoStream } from "../conferenceRoomElements";
+import BackgroundLetterAvatars from "../../StringAvatar";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -41,9 +42,7 @@ const Video = (props) => {
       });
     }, [props.peer.peer]);
     const classes = useStyles();
-    function capitalize(s) {
-      return s && s[0].toUpperCase() + s.slice(1);
-    }
+
     const togglePeerMedia = (command, peerID, userUpdate) => {
       if (command && peerID) {
         socketRef.current.emit("admin playstop muteunmute", {
@@ -55,9 +54,10 @@ const Video = (props) => {
     };
     return (
       <VideoCard>
-        <VideoStream playsInline autoPlay ref={ref} />
+        <VideoStream style = {{display: props.videoFlagTemp? 'block' : 'none'}} playsInline autoPlay ref={ref} />
+        {!props.videoFlagTemp && <BackgroundLetterAvatars name = {props.peer.peerUsername} />}
         <FooterContainer>
-          <UserNameText>{capitalize(props.peer.peerUsername)}</UserNameText>
+          <UserNameText>{(props.peer.peerUsername).toLowerCase()}</UserNameText>
           <div className={classes.controls}>
             <div
               onClick={() =>

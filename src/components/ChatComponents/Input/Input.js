@@ -5,7 +5,6 @@ import "./Input.css";
 import Button from "@mui/material/Button";
 import { makeStyles } from "@material-ui/core/styles";
 import DialogSelect from "./SelectDialog";
-import capitalize from "../../../utils/capitalize";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,14 +36,14 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: "bold",
   },
   button: {
-    textTransform: "lowercase !important",
+    textTransform: "capitalize !important",
   },
 }));
 
-const Input = ({ setMessage, sendMessage, message, users, name }) => {
-  const [displayUser, setDisplayUser] = useState("");
+const Input = ({ setMessage, displayUser, setDisplayUser, sendMessage, message, users, name }) => {
   const [open, setOpen] = useState(false);
   const [userID, setUserID] = useState("");
+
   const peers = users.filter(
     (user) => user.name?.toLowerCase() !== name.toLowerCase()
   );
@@ -71,7 +70,7 @@ const Input = ({ setMessage, sendMessage, message, users, name }) => {
         variant="contained"
         endIcon={<KeyboardArrowDownIcon />}
       >
-        {displayUser ? capitalize(displayUser) : " Everyone"}
+        {displayUser ?displayUser : " Everyone"}
       </Button>
       <form className="form">
         <input
@@ -84,7 +83,7 @@ const Input = ({ setMessage, sendMessage, message, users, name }) => {
             event.key === "Enter" ? sendMessage(event, userID) : null
           }
         />
-        <button className="sendButton" onClick={(e) => sendMessage(e, userID)}>
+        <button className="sendButton" onClick={ message ? (e) => sendMessage(e, userID) : e => e.preventDefault()}>
           <SendIcon />{" "}
         </button>
       </form>
@@ -93,6 +92,7 @@ const Input = ({ setMessage, sendMessage, message, users, name }) => {
         setOpen={setOpen}
         peers={peers}
         setDisplayUser={setDisplayUser}
+        displayUser = {displayUser}
       />
     </div>
   );

@@ -55,12 +55,13 @@ const Card = (props) => {
 
 
   useEffect(() => {
+    if(props.redirect) setIdToCall(props.redirect)
     const storedName = localStorage.getItem("firstName");
     if (storedName) {
       setName(storedName);
     }
 
-  }, []);
+  }, [props.redirect]);
 
 
   const handleClose = () => setShow(false);

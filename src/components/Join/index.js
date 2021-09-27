@@ -20,7 +20,10 @@ const useStyles = makeStyles((theme) => ({
 
   },
 }));
-const JoinAMeeting = ({ pageControl }) => {
+const JoinAMeeting = (props) => {
+
+
+  const {pageControl, redirect} = props;
 
   const isMobile = useMediaQuery({
     query: '(max-device-width: 480px)',
@@ -54,7 +57,7 @@ const JoinAMeeting = ({ pageControl }) => {
        
         </JoinContainer>
         <JoinContainer>
-          <Card join />
+          <Card join redirect = {redirect}/>
         </JoinContainer>
         </Container>
     </>

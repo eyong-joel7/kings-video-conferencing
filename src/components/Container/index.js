@@ -2,7 +2,7 @@
 // /* eslint-disable jsx-a11y/anchor-is-valid */
 import {makeStyles } from '@material-ui/core';
 
-import React, {useState } from 'react';
+import React, {useEffect, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 
 import './ContainerElements.css';
@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Container = () => {
+const Container = (props) => {
   const classes = useStyles();
   const [isToggled, setIsToggled] = useState(false);
   const [page, setPage] = useState('home');
@@ -51,11 +51,17 @@ const Container = () => {
     setIsToggled(!isToggled);
   };
 
+  
+  const redirect = props.location.search?.split("=")[1];
 const closeNav = ()=>{
   if((!hiddenClass && isToggled)){
   toggleHamburger();
   }
 }
+useEffect(() => {
+  if(redirect) setPage('join');
+},[redirect])
+
 
 const pageControl = (input) => {
   setPage(input);
@@ -132,7 +138,7 @@ const pageControl = (input) => {
                           <span className="nav-item-title">Settings</span>
                         </a>
                       </li>
-                      <li className="nav-item">
+                      {/* <li className="nav-item">
                         <a href="/" title="Logout">
                           <span className="nav-item-icon-container">
                             <span className="nav-item-icon">
@@ -151,7 +157,7 @@ const pageControl = (input) => {
                           <span className="nav-item-title">Logout</span>
                         </a>
                       </li>
-                 
+                  */}
                     </ul>
                   </div>
                 </div>
@@ -225,7 +231,7 @@ const pageControl = (input) => {
                 <div className="index--body--3G2lS">
                   <div className={classes.wrapper}>
                   {page === 'home' && <HomeScreen pageControl = {pageControl}/>}  
-                  {page === 'join' && <JoinAMeeting pageControl = {pageControl} />}
+                  {page === 'join' && <JoinAMeeting pageControl = {pageControl} redirect = {redirect}/>}
                   {page === 'host' && <StartAMeeting pageControl = {pageControl} />}
                   {page === 'profile' && <ProfileScreen pageControl = {pageControl}/>}
                   {page === 'setting' && <SettingScreen pageControl = {pageControl}/>}

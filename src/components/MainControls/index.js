@@ -17,10 +17,16 @@ const MainControls = (props) => {
     main__video_button,
     stream,
     users,
+    setIsNewMessage,
     toggleHamburger,
     setSelected,
-    setCopyInfo
+    selected,
+    setCopyInfo,
+    isNewMessage,
+
   } = props;
+
+  console.log(selected);
 
   const isLaptop = useMediaQuery({
     query: "(min-device-width: 768px)",
@@ -74,7 +80,10 @@ const MainControls = (props) => {
               className="main__controls__button"
               onClick={handleClick}
             >
+              {/* invisible={invisible} */}
+            <Badge color="secondary" variant="dot" invisible={(selected==='chat' || !isNewMessage)}>
               <MoreHorizIcon style = {{display: open? 'none': 'block'}}/>
+              </Badge>
               {open ? (
                 <div className = 'dropdown'>
                   <div style = {{flexDirection:'row'}}
@@ -82,6 +91,8 @@ const MainControls = (props) => {
                     onClick={() => {
                       toggleHamburger();
                       setSelected("chat");
+                      setIsNewMessage(false);
+                  
                     }}
                   >
                     <i className="fas fa-comment-alt"></i>
@@ -112,9 +123,13 @@ const MainControls = (props) => {
               onClick={() => {
                 toggleHamburger();
                 setSelected("chat");
+                setIsNewMessage(false);
+              
               }}
             >
+              <Badge color="secondary" variant="dot" invisible={(selected==='chat' || !isNewMessage)} >
               <i className="fas fa-comment-alt"></i>
+              </Badge>
               <span>Chat</span>
             </div>
             <div

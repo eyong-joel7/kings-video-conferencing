@@ -36,10 +36,12 @@
 
 .pl-10 {
   padding-left: 10px;
+  text-transform: capitalize;
 }
 
 .pr-10 {
   padding-right: 10px;
+  text-transform: capitalize;
 }
 
 .justifyStart {
