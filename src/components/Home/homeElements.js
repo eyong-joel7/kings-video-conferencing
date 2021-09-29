@@ -27,20 +27,21 @@ padding: 20px;
 `
 
 export const ImageContainer = styled.div`
+display: flex;
     width: 120px;
     height: 120px;
     justify-self: center;
     border-radius: 100%;
     background-color: #0e6a3c;
-    padding: 20px;
+    padding: 30px;
     @media screen and (max-width: 900px){
-        width: 100px;
-    height: 100px;
+        width: 80px;
+    height: 80px;
     padding: 20px;
 }
     @media screen and (max-width: 480px){
-        width: 80px;
-    height: 80px;
+        width: 50px;
+    height: 50px;
     padding: 15px;
 }
     

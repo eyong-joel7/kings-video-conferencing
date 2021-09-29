@@ -13,6 +13,7 @@ const useStyles = makeStyles((theme) => ({
   }));
 export const HomeScreen = ({pageControl}) => {
     const [userName, setUserName] = useState('');
+
     const [recentActivitiesList,setRecentActivitiesList] = useState([]);
     const isLaptop = useMediaQuery({
         query: '(min-device-width: 900px)',
@@ -23,6 +24,7 @@ export const HomeScreen = ({pageControl}) => {
           return s && s[0].toUpperCase() + s.slice(1);
       }
       useEffect(() => {
+
 const userName = localStorage.getItem('firstName');
 if(userName) setUserName(capitalize(userName));
  setRecentActivitiesList(JSON.parse(localStorage.getItem(RECENT_ACTIVITIES)));
@@ -81,6 +83,7 @@ if(userName) setUserName(capitalize(userName));
           </JoinContainer>
         </Container>
     <RecentActivity recentActivitiesList = {recentActivitiesList}/>
+ 
       </OutContainer>
     );
 }

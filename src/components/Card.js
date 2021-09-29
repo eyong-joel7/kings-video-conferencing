@@ -1,184 +1,173 @@
-import React, { useState, useEffect } from "react";
-import {
-  Button,
-  TextField,
-  Grid,
-  Typography,
-  Container,
-  Paper,
-} from "@material-ui/core";
-import {
-} from "@material-ui/icons";
-import { makeStyles } from "@material-ui/core/styles";
+import React, { useEffect, useState } from 'react';
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import TextField from '@material-ui/core/TextField';
+import Grid from '@material-ui/core/Grid';
 
-import NotificationModal from "./Modals";
+
+import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/core/styles';
+import Container from '@material-ui/core/Container';
+
+import { ChevronLeft, GroupAdd,Videocam } from '@material-ui/icons';
 import { useHistory } from "react-router-dom";
+import NotificationModal from './Modals';
+
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    display: "flex",
-    flexDirection: "column",
-  },
-  gridContainer: {
-    width: "100%",
-    [theme.breakpoints.down("xs")]: {
-      flexDirection: "column",
-    },
-  },
-  container: {
-    width: "auto",
-    margin: "35px 0",
-    padding: 0,
-    [theme.breakpoints.down("xs")]: {
-      width: "80%",
-    },
-  },
-  margin: {
-    marginTop: 20,
-  },
-  padding: {
-    padding: 10,
-  },
   paper: {
-    padding: "10px 20px",
+    marginTop: theme.spacing(6),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
   },
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.secondary.main,
+    width: 100,
+    height: 100,
+  },
+  form: {
+    width: '100%', // Fix IE 11 issue.
+    marginTop: theme.spacing(3),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+  svg: {
+    fontSize: '2.5rem'
+  }
 }));
 
-const Card = (props) => {
-  const { children, join, host } = props;
-  const history = useHistory();
+export default function ProfileScreen(props) {
+  const {host, pageControl} = props;
+  const classes = useStyles();
+  const [firstName, setFirstName] = useState('');
+  const [email, setEmail] = useState('');
   const [show, setShow] = useState(false);
+  const [message, setMessage] = useState(false);
   const [idToCall, setIdToCall] = useState("");
- 
-  const [message, setMessage] = useState("");
-  const [name, setName] = useState('');
+  const history = useHistory();
 
-
-  useEffect(() => {
-    if(props.redirect) setIdToCall(props.redirect)
+  useEffect(()=> {
+    if(props.redirect) setIdToCall(props.redirect);
     const storedName = localStorage.getItem("firstName");
     if (storedName) {
-      setName(storedName);
+      setFirstName(storedName)
     }
-
-  }, [props.redirect]);
-
-
-  const handleClose = () => setShow(false);
-
-  const classes = useStyles();
+   
+      if(localStorage.getItem('email')!==''){
+          setEmail(localStorage.getItem('email'))
+      }
+  },[props.redirect]);
 
 
-
-  const joinMeeting = (idToCall) => {
-    if (name && idToCall) {
-      localStorage.setItem("firstName", name);
-      idToCall &&
-      history.push({
-        pathname: `/conference-room/${(idToCall).replace(/\s+/g, '')}`,
-        state: { roomid: (idToCall).replace(/\s+/g, ''), name: name },
-      });
-    } else {
-      setShow(true);
-      setMessage(`Please fill in all reqiured fields`);
-    }
-  };
   const startMeeting = () => {
-    if (name && idToCall) {
-      localStorage.setItem("firstName", name);
-      idToCall &&
+
+   firstName && localStorage.setItem('firstName',firstName);
+   email && localStorage.setItem('email', email);
+    if (firstName && idToCall) {
       history.push({
         pathname: `/conference-room/${(idToCall).replace(/\s+/g, '')}`,
-        state: { roomid:  (idToCall).replace(/\s+/g, ''), name: name, host:true},
+        state: { roomid:  (idToCall).replace(/\s+/g, ''), firstName: firstName, host},
       });
     } else {
       setShow(true);
-      setMessage(`Please fill in all required fields`);
+      setMessage(`Meeting ID or Username is missing`);
     }
   };
+ 
+
+
+const handleClose = () => {setShow(false); pageControl('home')}
 
   return (
-    <>
-      <Container className={classes.container}>
-        <Paper elevation={10} className={classes.paper}>
-          <form className={classes.root} noValidate autoComplete="off">
-            <Grid container className={classes.gridContainer}>
-              {host && (
-                <Grid item className={classes.padding}>
-                  <Typography gutterBottom variant="h6">
-                    Meeting Info
-                  </Typography>
-                  <TextField
-                    label="Enter Name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    fullWidth
-                  />
-                  <TextField
-                    label="Meeting ID"
-                    value={idToCall}
-                    onChange={(e) => {setIdToCall(e.target.value)}}
-                    fullWidth
-                  />
-                    <Button
-                      className={classes.margin}
-                      onClick={() => startMeeting()}
-                      variant="contained"
-                      color="primary"
-                      fullWidth
-                    >
-                       Start Meeting
-                    </Button>
-                </Grid>
-              )}
-
-              {join && (
-                <Grid item xs={12} md={6} className={classes.padding}>
-                  <Typography gutterBottom variant="h6">
-                    Join Meeting
-                  </Typography>
-                  <TextField
-                    label="Name"
-                    value={name}
-                    required
-                    onChange={(e) => setName(e.target.value)}
-                    fullWidth
-                  />
-                  <TextField
-                    label="Meeting ID"
-                    value={idToCall}
-                    required
-                    onChange={(e) => setIdToCall(e.target.value)}
-                    fullWidth
-                  />
-                
-                    <Button
-                      onClick={() => joinMeeting(idToCall)}
-                      className={classes.margin}
-                      variant="contained"
-                      color="primary"
-                      fullWidth
-                      
-                    >
-                      JOIN
-                    </Button>
-                  
-                </Grid>
-              )}
+    <div style ={{width: '100%', padding:'20px'}}>
+       <div onClick = {()=> handleClose()} style = {{display: 'flex', alignItems:'center', cursor:'pointer'}}> <ChevronLeft/><span>Back</span></div>
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <div className={classes.paper}>
+        <Avatar className={classes.avatar}>
+        {host? <Videocam className = {classes.svg}/> : <GroupAdd className = {classes.svg}/>} 
+        </Avatar>
+        <Typography component="h1" variant="h5">
+         {host? 'Start a Meeting' : 'Join a Meeting'}
+        </Typography>
+        <form className={classes.form} noValidate>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                autoComplete="firstName"
+               value={firstName}
+                variant="outlined"
+                required
+                fullWidth
+                id="firstName"
+                label="First Name"
+                autoFocus
+                onChange = {(e) => setFirstName(e.target.value)}
+              />
             </Grid>
-          </form>
-          {children}
-        </Paper>
-      </Container>
-      {show && (
-        <NotificationModal
-          show={show}
-          handleClose={handleClose}
-          message={message}
-        />
-      )}
-    </>
+           
+            <Grid item xs={12} sm={6}>
+              <TextField
+                variant="outlined"
+                fullWidth
+                id="email"
+                label="Email Address"
+                value={email}
+                autoComplete="email"
+                onChange = {(e) => setEmail(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="lastName"
+                label="Meeting ID"
+                value={idToCall}
+                autoComplete="idToCall"
+                onChange = {(e) => setIdToCall(e.target.value)}
+              />
+            </Grid>
+           
+          </Grid>
+          {
+            host? (
+              <Button
+    
+                fullWidth
+                variant="contained"
+                color="primary"
+                disabled = {firstName ==='' || idToCall === ''}
+                className={classes.submit}
+                onClick  = {startMeeting}
+              >
+               Start Meeting
+              </Button>
+            ) :(
+              <Button
+              onClick  = {startMeeting}
+                fullWidth
+                variant="contained"
+                color="primary"
+                disabled = {firstName ==='' || idToCall === ''}
+                className={classes.submit}
+              >
+                Join Meeting
+              </Button>
+          
+            )
+          }
+        
+      </form>
+      </div>
+   
+      <NotificationModal message = {message}  show  = {show} handleClose = {() => setShow(false)}/>
+    </Container>
+    </div>
   );
-};
-
-export default Card;
+}

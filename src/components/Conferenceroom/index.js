@@ -139,7 +139,7 @@ const ConferenceRoom = (props) => {
     if (cameraID) constraints.video["deviceId"] = cameraID;
     if (audioID) constraints.audio["deviceId"] = audioID;
 // 'http://localhost:5000/'
-    socketRef.current = io.connect(URL);
+    socketRef.current = io.connect('http://localhost:5000/');
     navigator.mediaDevices
       .getUserMedia(constraints)
       .then((stream) => {
@@ -216,9 +216,7 @@ const ConferenceRoom = (props) => {
           setMessages((messages) => [...messages, message]);
           const user = message.user.trim().toLowerCase();
           if (user === "admin") {
-            setErrorMessage(message.text);
-            setTimer(true);
-            setShow(true);
+        !message.text.toLowerCase().includes('welcome') && setErrorMessage(message.text);
           }
         if(user !== userName) setIsNewMessage(true);
         });
@@ -513,10 +511,10 @@ const ConferenceRoom = (props) => {
     main__video_button.current.innerHTML = html;
   };
   const classes = useStyles();
-  if (stream) peersRef.current.length > 0 ? music.pause() : music.play();
+  if (stream) peersRef.current.length > 0 || errorMessage ? music.pause() : music.play();
   let isVideoEnabled =
     userVideo.current?.srcObject?.getVideoTracks()[0]?.enabled;
-    console.log('selected2',selected)
+
 
   return (
     <div>

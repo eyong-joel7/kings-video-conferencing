@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -14,6 +14,7 @@ import Typography from '@material-ui/core/Typography';
 import { ExitToApp, Info} from '@material-ui/icons';
 import { Divider } from '@material-ui/core';
 import { useHistory } from 'react-router';
+import LoadingBackdrop from '../LoadingBackdrop';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -46,6 +47,11 @@ marginLeft: 10,
 
 
 export default function RecentActivity({recentActivitiesList}) {
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+   if(recentActivitiesList) setOpen(false);
+    else setOpen(true)
+  },[recentActivitiesList])
   const classes = useStyles();
 const history = useHistory();
   return (
@@ -63,8 +69,8 @@ const history = useHistory();
           <div className={classes.demo}>
             <List dense= {true}>
                { recentActivitiesList?.length > 0 ?(recentActivitiesList.sort((a,b) => -1).map(activity => (
-                <ListItem key = {activity.dateTime} onClick = {() => history.push({pathname: `/conference-room/${activity.meetingID}`, state: {host:activity.host}})}>
-                <ListItemAvatar>
+                <ListItem key = {activity.dateTime} >
+                <ListItemAvatar onClick = {() => history.push({pathname: `/conference-room/${activity.meetingID}`, state: {host:activity.host}})}>
                   <Avatar>
                    <Info/>
                   </Avatar>
@@ -88,6 +94,7 @@ const history = useHistory();
           </div>
         </Grid>
       </Grid>
+      <LoadingBackdrop open = {open}/>
     </div>
   );
 }
