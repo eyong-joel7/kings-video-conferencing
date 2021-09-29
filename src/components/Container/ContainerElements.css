@@ -356,19 +356,16 @@ html li {
     flex: 1 1 auto;
 }
 ._header-content--header--3mdiS h1 {
-    font-size: 2rem;
-    font-weight: 400;
-    text-align: center;   
-    letter-spacing: 0.1938rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    letter-spacing: 0.938rem;
     font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif, 'Times New Roman', Times, serif;
     color: #f1f1f1; 
 
 }
-@media screen  and (max-width: 480px) {
-    ._header-content--header--3mdiS h1 {
-        margin-right: 48px;
-    }
-}
+
+
 .shared--context-label--1Ij2n {
     font-size: .75rem;
     line-height: 24px;

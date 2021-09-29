@@ -89,7 +89,7 @@ export default function SearchAppBar({users, toggleControls,setUserList, usersLi
             </div>
             <InputBase
               placeholder="Search…"
-              onChange = {({target: {value}}) => setUserList(users.filter(user => user.name.includes(value)))}
+              onChange = {({target: {value}}) => setUserList(users.filter(user => user.name.toLowerCase().includes(value.toLowerCase())))}
               classes={{
                 root: classes.inputRoot,
                 input: classes.inputInput,

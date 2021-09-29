@@ -40,6 +40,7 @@ export default function ProfileScreen({pageControl}) {
   const [lastName, setLastName] = useState('');
   const [show, setShow] = useState(false);
   const [message, setMessage] = useState(false);
+  const [returnHome, setReturnHome] = useState(false);
 
   useEffect(()=> {
       if(localStorage.getItem('firstName')!==''){
@@ -52,27 +53,40 @@ export default function ProfileScreen({pageControl}) {
       if(localStorage.getItem('email')!==''){
           setEmail(localStorage.getItem('email'))
       }
-  },[])
+  },[]);
+
+  function validateEmail(email) {
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
 const update = (e) => {
     e.preventDefault();
-  
+  if(validateEmail(email)){
     if(firstName && lastName && email){
-        localStorage.setItem('firstName',firstName);
-        localStorage.setItem('lastName',lastName);
-        localStorage.setItem('email',email);
-        setMessage('Profile Updated Successfully')
-        setShow(true);
-    }
-    else {
-        setMessage('Please validate all required fields');
-        setShow(true)
-    }
+      localStorage.setItem('firstName',firstName.trim().toUpperCase());
+      localStorage.setItem('lastName',lastName.trim().toUpperCase());
+      localStorage.setItem('email',email.trim().toLowerCase());
+      setMessage('Profile Updated Successfully')
+      setShow(true);
+      setReturnHome(true)
+  }
+  else {
+      setMessage('Please validate all required fields');
+      setShow(true)
+  }
+
+  }
+  else {
+    setMessage('Invalid Email');
+    setShow(true)
+  }
+ 
 }
-const handleClose = () => {setShow(false); pageControl('home')}
+const handleClose = () => {setShow(false); returnHome && pageControl('home')}
 
   return (
     <div style ={{width: '100%', padding:'20px'}}>
-       <div onClick = {()=> handleClose()} style = {{display: 'flex', alignItems:'center', cursor:'pointer'}}> <ChevronLeft/><span>Back</span></div>
+       <div onClick = {()=> pageControl('home')} style = {{display: 'flex', alignItems:'center', cursor:'pointer'}}> <ChevronLeft/><span>Back</span></div>
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
