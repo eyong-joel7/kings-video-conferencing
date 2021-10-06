@@ -62,11 +62,14 @@ export default function ProfileScreen(props) {
       }
   },[props.redirect]);
 
+  function validateEmail(email) {
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
 
   const startMeeting = () => {
-
    firstName && localStorage.setItem('firstName',firstName);
-   email && localStorage.setItem('email', email);
+   if(email && validateEmail(email)) localStorage.setItem('email', email);
     if (firstName && idToCall) {
       history.push({
         pathname: `/conference-room/${(idToCall).replace(/\s+/g, '')}`,

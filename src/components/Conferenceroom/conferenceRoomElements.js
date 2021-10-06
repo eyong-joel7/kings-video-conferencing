@@ -52,7 +52,6 @@ export const VideoCard = styled.div`
 `;
 
 export const VideoStream = styled.video`
-
   height: 100%;
   width: 100%;
   max-height: 350px;

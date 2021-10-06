@@ -128,3 +128,10 @@ color: #15c26b !important;
 .css-1t1j96h-MuiPaper-root-MuiDialog-paper {
   min-width: 280px;
 }
+
+.mirror-mode{
+  -ms-transform: scaleX(-1);
+  -moz-transform: scaleX(-1);
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+}

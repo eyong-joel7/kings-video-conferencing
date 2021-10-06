@@ -54,7 +54,7 @@ const Video = (props) => {
     };
     return (
       <VideoCard>
-        <VideoStream style = {{display: props.videoFlagTemp? 'block' : 'none'}} playsInline autoPlay ref={ref} />
+        <VideoStream id = {props.id} style = {{display: props.videoFlagTemp? 'block' : 'none'}} playsInline autoPlay ref={ref} />
         {!props.videoFlagTemp && <BackgroundLetterAvatars name = {props.peer.peerUsername} />}
         <FooterContainer>
           <UserNameText>{(props.peer.peerUsername).toLowerCase()}</UserNameText>

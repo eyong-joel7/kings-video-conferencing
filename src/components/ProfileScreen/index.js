@@ -137,10 +137,11 @@ const handleClose = () => {setShow(false); returnHome && pageControl('home')}
             </Grid>
           </Grid>
           <Button
-          type = "submit"
+            type = "submit"
             fullWidth
             variant="contained"
             color="primary"
+            disabled = {firstName ===''}
             className={classes.submit}
           >
             Update

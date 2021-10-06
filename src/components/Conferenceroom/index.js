@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
@@ -35,6 +35,7 @@ import LoadingBackdrop from "../LoadingBackdrop";
 import Video from "./VideoPlayer";
 import { AudioPlayer } from "./AudioPlayer";
 import BackgroundLetterAvatars from "../StringAvatar";
+import helper from '../../utils/helper'
 
 const useStyles = makeStyles((theme) => ({
   color: {
@@ -66,11 +67,12 @@ const ConferenceRoom = (props) => {
   const constraints = {
     audio: { echoCancellation: true },
     video: {
-      width: { min: 640 },
-      height: { min: 480 },
+      width: {min: 640, ideal: 1280, max: 1920},
+      height: {min: 480, ideal: 720, max: 1080},
     },
   };
 
+  // eslint-disable-next-line no-unused-vars
   const [peers, setPeers] = useState([]);
   const [users, setUsers] = useState([]);
   const socketRef = useRef();
@@ -78,7 +80,9 @@ const ConferenceRoom = (props) => {
   const peersRef = useRef([]);
   const main__mute_button = useRef();
   const main__video_button = useRef();
+  const main__share_button = useRef();
   const [stream, setStream] = useState();
+  const [screen, setScreen] = useState(null);
   const [isToggled, setIsToggled] = useState(false);
   const [selected, setSelected] = useState("");
   const [displayUser, setDisplayUser] = useState("");
@@ -95,9 +99,16 @@ const ConferenceRoom = (props) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [open, setOpen] = useState(false);
   const [isNewMessage, setIsNewMessage] = useState(false);
+  const [displayStream, setdisplayStream] = useState(false);    
+
+useEffect(()=> {
+//When the stop sharing button shown by the browser is clicked
+!!screen && screen.getVideoTracks()[0].addEventListener( 'ended', () => {
+  stopSharingScreen();
+});
+},[screen]);
 
   const music = document.getElementById("music");
-
   const location = useLocation();
   const hiddenClass = useMediaQuery({
     query: "(min-device-width: 1200px)",
@@ -139,9 +150,9 @@ const ConferenceRoom = (props) => {
     if (cameraID) constraints.video["deviceId"] = cameraID;
     if (audioID) constraints.audio["deviceId"] = audioID;
 // 'http://localhost:5000/'
-    socketRef.current = io.connect(URL);
-    navigator.mediaDevices
-      .getUserMedia(constraints)
+    socketRef.current = io(URL);
+    // we will check is user accept to use both audio and video before getting full media else we will call get getUserAudio from helper without contraints
+      helper.getUserFullMedia(constraints)
       .then((stream) => {
         setOpen(false);
         userVideo.current.srcObject = stream;
@@ -242,6 +253,12 @@ const ConferenceRoom = (props) => {
           }
         });
 
+      //   socketRef.current.on('display-media', (data) => {
+      //     if (data.value) checkAndAddClass(this.getMyVideo(data.userID), 'displayMedia');
+      //     else checkAndAddClass(this.getMyVideo(data.userID), 'userMedia');
+      // });
+
+
         if (hiddenClass) {
           setIsToggled(true);
           setSelected("chat");
@@ -259,10 +276,11 @@ const ConferenceRoom = (props) => {
           );
         } else
           setErrorMessage(
-            "getUserMedia error: " + error.name + `error: ${error}`
+            `getUserMedia error: error: ${error}`
           );
       });
-
+    
+  
     return () => {
       stream?.getTracks() &&
         stream.getTracks().forEach((track) => track.stop());
@@ -423,6 +441,7 @@ const ConferenceRoom = (props) => {
     }
   };
 
+
   const playStop = () => {
     if (userVideo.current.srcObject) {
       const updateExist = userUpdate.find(
@@ -479,6 +498,62 @@ const ConferenceRoom = (props) => {
     }
   };
 
+  function shareScreen() {
+    helper.shareScreen().then( ( stream ) => {
+        setdisplayStream( true );
+
+        //disable the video toggle btns while sharing screen. This is to ensure clicking on the btn does not interfere with the screen sharing
+        //It will be enabled was user stopped sharing screen
+        // helper.toggleVideoBtnDisabled( true );
+        setPlayVideo()
+
+        //save my screen stream
+
+        setScreen(stream)
+
+        //share the new stream with all partners
+        broadcastNewTracks( stream, 'video', false );
+
+        
+    } ).catch( ( e ) => {
+        console.error( e );
+    } );
+}
+
+
+   async function stopSharingScreen() {
+  //enable video toggle btn
+//  helper.toggleVideoBtnDisabled(false)
+
+
+  try {
+       await new Promise((res, rej) => {
+         // eslint-disable-next-line no-unused-expressions
+         screen.getTracks().length ? screen.getTracks().forEach(track => track.stop()) : '';
+         res();
+       });
+       setStopVideo()
+       setdisplayStream(false);
+       broadcastNewTracks(stream, 'video');
+     } catch (e) {
+       console.error(e);
+     }
+}
+
+
+  function broadcastNewTracks( stream, type, mirrorMode = true ) {
+    helper.setLocalStream(userVideo.current, stream, mirrorMode );
+    let track = type === 'audio' ? stream.getAudioTracks()[0] : stream.getVideoTracks()[0];
+    for ( let p in peersRef.current ) {
+        let peer = peersRef.current[p].peer
+
+        if ( typeof peer == 'object' ) {
+            helper.replaceTrack(track, peer);
+        }
+       
+    }
+}
+
   const setMuteButton = () => {
     const html = `
           <i class="fas fa-microphone"></i>
@@ -503,6 +578,15 @@ const ConferenceRoom = (props) => {
     main__video_button.current.innerHTML = html;
   };
 
+  const shareStop = () => {
+    if (screen && screen.getVideoTracks().length && screen.getVideoTracks()[0].readyState !== 'ended' ) {
+      stopSharingScreen();
+  }
+  else {
+      shareScreen();
+  }
+  }
+
   const setPlayVideo = () => {
     const html = `
         <i class="stop fas fa-video-slash"></i>
@@ -514,8 +598,6 @@ const ConferenceRoom = (props) => {
   if (stream) peersRef.current.length > 0 || errorMessage ? music.pause() : music.play();
   let isVideoEnabled =
     userVideo.current?.srcObject?.getVideoTracks()[0]?.enabled;
-
-
   return (
     <div>
       <div className="conference video_app__container">
@@ -596,6 +678,7 @@ const ConferenceRoom = (props) => {
                           <BackgroundLetterAvatars name={userName} />
                         )}
                         <VideoStream
+                        id = {`myVideo`}
                           style={{
                             display:
                               stream && isVideoEnabled ? "block" : "none",
@@ -612,6 +695,7 @@ const ConferenceRoom = (props) => {
                             </UserNameText>
                             <div className={classes.controls}>
                               <div
+                              id = {`playStop`}
                                 className={
                                   videoFlag
                                     ? classes.iconsEnabled
@@ -626,6 +710,7 @@ const ConferenceRoom = (props) => {
                                 )}
                               </div>
                               <div
+                              id = {`muteunmute`}
                                 className={
                                   audioFlag
                                     ? classes.iconsEnabled
@@ -647,7 +732,6 @@ const ConferenceRoom = (props) => {
                       {peersRef.current.map((peer) => {
                         let audioFlagTemp = true;
                         let videoFlagTemp = true;
-
                         const user = users.find(
                           (user) =>
                             user.name.toLowerCase() === userName.toLowerCase()
@@ -666,6 +750,7 @@ const ConferenceRoom = (props) => {
                         }
                         return (
                           <Video
+                          id = {`remote-video-${peer.peerID}`}
                             key={peer.peerID}
                             peer={peer}
                             audioFlagTemp={audioFlagTemp}
@@ -693,8 +778,13 @@ const ConferenceRoom = (props) => {
                       leaveCall={leaveCall}
                       main__mute_button={main__mute_button}
                       main__video_button={main__video_button}
+                      main__share_button = {main__share_button}
+                      shareStop = {shareStop}
+                      isShareToggled = {displayStream}
                       stream={stream}
                       users={users}
+                      host = {host}
+
                     />
                   </div>
                 </span>
