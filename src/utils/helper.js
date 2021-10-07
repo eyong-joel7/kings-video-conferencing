@@ -1,6 +1,11 @@
 /* eslint-disable import/no-anonymous-default-export */
 export default {
-
+ formatDate (timestamp) {
+        const d = new Date(timestamp)
+        const time = d.toLocaleTimeString('en-US')
+        return time.substr(0, 5) + time.slice(-2) + ' | ' + d.toLocaleDateString()
+      },
+      
 userMediaAvailable() {
     return !!( navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia );
 },

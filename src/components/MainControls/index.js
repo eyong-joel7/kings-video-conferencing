@@ -18,7 +18,6 @@ const MainControls = (props) => {
     muteUnmute,
     main__mute_button,
     main__video_button,
-    main__share_button,
     stream,
     users,
     setIsNewMessage,
@@ -30,8 +29,6 @@ const MainControls = (props) => {
     shareStop,
     isShareToggled,
   } = props;
-
-  console.log(selected);
 
   const isLaptop = useMediaQuery({
     query: "(min-device-width: 768px)",
@@ -104,7 +101,7 @@ const MainControls = (props) => {
                     }}
                   >
                     <i className="fas fa-comment-alt"></i>
-                    <span style={{ marginLeft: "5px" }}>Chat</span>
+                    <span style={{ marginLeft: "8px" }}>Chat</span>
                   </div>
                   <div
                     style={{ flexDirection: "row" }}
@@ -116,33 +113,33 @@ const MainControls = (props) => {
                     <span>
                       <PersonAddIcon />
                     </span>
-                    <span style={{ marginLeft: "5px" }}>Invite</span>
+                    <span style={{ marginLeft: "8px" }}>Invite</span>
                   </div>
-                  {!!stream && !!host (
-              <div
-                id="sharestop"
-                ref={main__share_button}
-                className="main__controls__button"
-                onClick={shareStop}
-              >
-                {!isShareToggled ? (
-                  <>
-                    <span>
-                    <ScreenShareOutlinedIcon />
-                    </span>
-                    <span>Share</span>{" "}
-                  </>
-                ) : (
-                  <>
-                    <span>
-                      <StopScreenShareOutlineIcon />
-                    </span>
-                    <span>Stop</span>
-                  </>
-                )}
-              </div>
-            )}
-
+                  {!!stream &&
+                    !!host &&(
+                      <div
+                        style={{ flexDirection: "row" }}
+                        id="sharestop"
+                        className="main__controls__button"
+                        onClick={shareStop}
+                      >
+                        {!isShareToggled ? (
+                          <>
+                            <span>
+                              <ScreenShareOutlinedIcon />
+                            </span>
+                            <span style={{ marginLeft: "8px" }}>Share</span>{" "}
+                          </>
+                        ) : (
+                          <>
+                            <span>
+                              <StopScreenShareOutlineIcon />
+                            </span>
+                            <span style={{ marginLeft: "8px" }}>Stop</span>
+                          </>
+                        )}
+                      </div>
+                    )}
                 </div>
               ) : null}
 
@@ -179,30 +176,30 @@ const MainControls = (props) => {
               </span>
               <span>Invite</span>
             </div>
-            {!!stream && !!host (
-              <div
-                id="sharestop"
-                ref={main__share_button}
-                className="main__controls__button"
-                onClick={shareStop}
-              >
-                {!isShareToggled ? (
-                  <>
-                    <span>
-                    <ScreenShareOutlinedIcon />
-                    </span>
-                    <span>Share</span>{" "}
-                  </>
-                ) : (
-                  <>
-                    <span>
-                      <StopScreenShareOutlineIcon />
-                    </span>
-                    <span>Stop</span>
-                  </>
-                )}
-              </div>
-            )}
+            {!!stream &&
+              !!host &&(
+                <div
+                  id="sharestop"
+                  className="main__controls__button"
+                  onClick={shareStop}
+                >
+                  {!isShareToggled ? (
+                    <>
+                      <span>
+                        <ScreenShareOutlinedIcon />
+                      </span>
+                      <span>Share</span>{" "}
+                    </>
+                  ) : (
+                    <>
+                      <span>
+                        <StopScreenShareOutlineIcon />
+                      </span>
+                      <span>Stop</span>
+                    </>
+                  )}
+                </div>
+              )}
           </>
         )}
       </div>

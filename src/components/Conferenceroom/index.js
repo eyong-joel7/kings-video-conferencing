@@ -80,7 +80,7 @@ const ConferenceRoom = (props) => {
   const peersRef = useRef([]);
   const main__mute_button = useRef();
   const main__video_button = useRef();
-  const main__share_button = useRef();
+  
   const [stream, setStream] = useState();
   const [screen, setScreen] = useState(null);
   const [isToggled, setIsToggled] = useState(false);
@@ -778,12 +778,11 @@ useEffect(()=> {
                       leaveCall={leaveCall}
                       main__mute_button={main__mute_button}
                       main__video_button={main__video_button}
-                      main__share_button = {main__share_button}
                       shareStop = {shareStop}
                       isShareToggled = {displayStream}
                       stream={stream}
                       users={users}
-                      host = {host}
+                      host = {host ? host :  null}
 
                     />
                   </div>
