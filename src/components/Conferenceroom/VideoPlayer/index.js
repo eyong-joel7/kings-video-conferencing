@@ -60,10 +60,6 @@ const Video = (props) => {
           <UserNameText>{(props.peer.peerUsername).toLowerCase()}</UserNameText>
           <div className={classes.controls}>
             <div
-              onClick={() =>
-                user?.isAdmin &&
-                togglePeerMedia("video", props.peer.peerID, props.userUpdate)
-              }
               className={
                 props.videoFlagTemp ? classes.iconsEnabled : classes.iconsDisabled
               }

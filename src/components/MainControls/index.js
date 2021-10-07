@@ -115,31 +115,7 @@ const MainControls = (props) => {
                     </span>
                     <span style={{ marginLeft: "8px" }}>Invite</span>
                   </div>
-                  {!!stream &&
-                    !!host &&(
-                      <div
-                        style={{ flexDirection: "row" }}
-                        id="sharestop"
-                        className="main__controls__button"
-                        onClick={shareStop}
-                      >
-                        {!isShareToggled ? (
-                          <>
-                            <span>
-                              <ScreenShareOutlinedIcon />
-                            </span>
-                            <span style={{ marginLeft: "8px" }}>Share</span>{" "}
-                          </>
-                        ) : (
-                          <>
-                            <span>
-                              <StopScreenShareOutlineIcon />
-                            </span>
-                            <span style={{ marginLeft: "8px" }}>Stop</span>
-                          </>
-                        )}
-                      </div>
-                    )}
+              
                 </div>
               ) : null}
 

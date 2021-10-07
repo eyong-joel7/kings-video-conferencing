@@ -239,12 +239,10 @@ useEffect(()=> {
         socketRef.current.on("change", (payload) => {
           setUserUpdate(payload);
         });
-
         socketRef.current.on("admin playstop muteunmute", (payload) => {
           if (payload.peerID === socketRef.current.id) {
             payload.userUpdate && setUserUpdate([...payload.userUpdate]);
             if (payload.command === "audio") {
-              console.log("audio clicked");
               muteUnmute();
             }
             if (payload.command === "video") {
