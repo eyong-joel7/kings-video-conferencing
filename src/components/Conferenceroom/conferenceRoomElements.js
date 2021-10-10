@@ -6,7 +6,7 @@ export const VideoContainer = styled.div`
     margin-left: auto;
     padding-right: 15px;
     padding-left: 15px;
-    max-height: 100%;
+    height: 85vh;
     justify-content: center;
     display: flex;
 `;
