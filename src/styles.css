@@ -135,3 +135,10 @@ color: #15c26b !important;
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
 }
+
+.local-video{
+  bottom: 5rem;
+  left: 0;
+  position: fixed;
+  width:15vw;
+}

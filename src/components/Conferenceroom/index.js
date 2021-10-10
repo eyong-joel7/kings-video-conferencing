@@ -1,4 +1,3 @@
-
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
@@ -14,52 +13,19 @@ import "./conferenceElements.css";
 import Cop2CB from "../Modals/Copy2C";
 import { RECENT_ACTIVITIES } from "../../CONSTANTS";
 
-import MicOffIcon from "@mui/icons-material/MicOff";
-import MicIcon from "@mui/icons-material/Mic";
-import VideocamIcon from "@mui/icons-material/Videocam";
-import VideocamOffIcon from "@mui/icons-material/VideocamOff";
-import { makeStyles } from "@material-ui/styles";
 import {
   SELECTED_CAMERA_DEVICE_ID,
   SELECTED_MIC_DEVICE_ID,
 } from "../../CONSTANTS";
 import {
-  FooterContainer,
-  UserNameText,
-  VideoCard,
   VideoContainer,
   VideoStream,
-  VideoWrapper,
 } from "./conferenceRoomElements";
 import LoadingBackdrop from "../LoadingBackdrop";
 import Video from "./VideoPlayer";
 import { AudioPlayer } from "./AudioPlayer";
 import BackgroundLetterAvatars from "../StringAvatar";
-import helper from '../../utils/helper'
-
-const useStyles = makeStyles((theme) => ({
-  color: {
-    color: "#fff",
-    fontSize: "1rem",
-  },
-
-  iconsEnabled: {
-    backgroundColor: "#1a3050",
-    borderRadius: "50%",
-    padding: "5px",
-    margin: "0 2px",
-  },
-  iconsDisabled: {
-    backgroundColor: "red",
-    borderRadius: "50%",
-    padding: "5px",
-    margin: "0 2px",
-  },
-  controls: {
-    display: "flex",
-    justifyContent: "space-between",
-  },
-}));
+import helper from "../../utils/helper";
 
 const ConferenceRoom = (props) => {
   const cameraID = localStorage.getItem(SELECTED_CAMERA_DEVICE_ID);
@@ -67,8 +33,8 @@ const ConferenceRoom = (props) => {
   const constraints = {
     audio: { echoCancellation: true },
     video: {
-      width: {min: 640, ideal: 1280, max: 1920},
-      height: {min: 480, ideal: 720, max: 1080},
+      width: { min: 640, ideal: 1280, max: 1920 },
+      height: { min: 480, ideal: 720, max: 1080 },
     },
   };
 
@@ -80,7 +46,7 @@ const ConferenceRoom = (props) => {
   const peersRef = useRef([]);
   const main__mute_button = useRef();
   const main__video_button = useRef();
-  
+
   const [stream, setStream] = useState();
   const [screen, setScreen] = useState(null);
   const [isToggled, setIsToggled] = useState(false);
@@ -99,24 +65,27 @@ const ConferenceRoom = (props) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [open, setOpen] = useState(false);
   const [isNewMessage, setIsNewMessage] = useState(false);
-  const [displayStream, setdisplayStream] = useState(false);    
+  const [displayStream, setdisplayStream] = useState(false);
 
-useEffect(()=> {
-//When the stop sharing button shown by the browser is clicked
-!!screen && screen.getVideoTracks()[0].addEventListener( 'ended', () => {
-  stopSharingScreen();
-});
-},[screen]);
+  useEffect(() => {
+    //When the stop sharing button shown by the browser is clicked
+    !!screen &&
+      screen.getVideoTracks()[0].addEventListener("ended", () => {
+        stopSharingScreen();
+      });
+  }, [screen]);
 
   const music = document.getElementById("music");
   const location = useLocation();
   const hiddenClass = useMediaQuery({
     query: "(min-device-width: 1200px)",
   });
+  const isDesktop = useMediaQuery({
+    query: "(min-device-width: 768px)",
+  });
   const toggleHamburger = () => {
     setIsToggled(!isToggled);
-    setSelected('');
- 
+    setSelected("");
   };
 
   const closeNav = () => {
@@ -149,10 +118,11 @@ useEffect(()=> {
     }
     if (cameraID) constraints.video["deviceId"] = cameraID;
     if (audioID) constraints.audio["deviceId"] = audioID;
-// 'http://localhost:5000/'
+    // 'http://localhost:5000/'
     socketRef.current = io(URL);
     // we will check is user accept to use both audio and video before getting full media else we will call get getUserAudio from helper without contraints
-      helper.getUserFullMedia(constraints)
+    helper
+      .getUserFullMedia(constraints)
       .then((stream) => {
         setOpen(false);
         userVideo.current.srcObject = stream;
@@ -192,6 +162,7 @@ useEffect(()=> {
             });
           });
           setPeers(peers);
+          helper.adjustVideoElemSize(isDesktop);
         });
 
         socketRef.current.on("user joined", (payload) => {
@@ -208,6 +179,7 @@ useEffect(()=> {
             peerUsername: payload.userName,
           };
           setPeers((users) => [...users, peerObj]);
+          helper.adjustVideoElemSize(isDesktop);
         });
 
         socketRef.current.on("receiving returned signal", (payload) => {
@@ -221,15 +193,17 @@ useEffect(()=> {
             const peers = peersRef.current.filter((p) => p.peerID !== id);
             peersRef.current = peers;
             setPeers(peers);
+            helper.adjustVideoElemSize(isDesktop);
           }
         });
         socketRef.current.on("message", (message) => {
           setMessages((messages) => [...messages, message]);
           const user = message.user.trim().toLowerCase();
           if (user === "admin") {
-        !message.text.toLowerCase().includes('welcome') && setErrorMessage(message.text);
+            !message.text.toLowerCase().includes("welcome") &&
+              setErrorMessage(message.text);
           }
-        if(user !== userName) setIsNewMessage(true);
+          if (user !== userName) setIsNewMessage(true);
         });
 
         socketRef.current.on("roomData", ({ users }) => {
@@ -251,12 +225,6 @@ useEffect(()=> {
           }
         });
 
-      //   socketRef.current.on('display-media', (data) => {
-      //     if (data.value) checkAndAddClass(this.getMyVideo(data.userID), 'displayMedia');
-      //     else checkAndAddClass(this.getMyVideo(data.userID), 'userMedia');
-      // });
-
-
         if (hiddenClass) {
           setIsToggled(true);
           setSelected("chat");
@@ -272,13 +240,9 @@ useEffect(()=> {
             "Permissions have not been granted to use your camera and " +
               "microphone, you need to allow the page access to your devices"
           );
-        } else
-          setErrorMessage(
-            `getUserMedia error: error: ${error}`
-          );
+        } else setErrorMessage(`getUserMedia error: error: ${error}`);
       });
-    
-  
+
     return () => {
       stream?.getTracks() &&
         stream.getTracks().forEach((track) => track.stop());
@@ -329,7 +293,7 @@ useEffect(()=> {
       );
       socketRef.current.emit(
         "sendMessage",
-        { message, userID: user?.id, recipient},
+        { message, userID: user?.id, recipient },
         () => setMessage("")
       );
     }
@@ -439,7 +403,6 @@ useEffect(()=> {
     }
   };
 
-
   const playStop = () => {
     if (userVideo.current.srcObject) {
       const updateExist = userUpdate.find(
@@ -497,60 +460,62 @@ useEffect(()=> {
   };
 
   function shareScreen() {
-    helper.shareScreen().then( ( stream ) => {
-        setdisplayStream( true );
+    helper
+      .shareScreen()
+      .then((stream) => {
+        setdisplayStream(true);
 
         //disable the video toggle btns while sharing screen. This is to ensure clicking on the btn does not interfere with the screen sharing
         //It will be enabled was user stopped sharing screen
         // helper.toggleVideoBtnDisabled( true );
-        setPlayVideo()
+        setPlayVideo();
 
         //save my screen stream
 
-        setScreen(stream)
+        setScreen(stream);
 
         //share the new stream with all partners
-        broadcastNewTracks( stream, 'video', false );
+        broadcastNewTracks(stream, "video", false);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  }
 
-        
-    } ).catch( ( e ) => {
-        console.error( e );
-    } );
-}
+  async function stopSharingScreen() {
+    //enable video toggle btn
+    //  helper.toggleVideoBtnDisabled(false)
 
-
-   async function stopSharingScreen() {
-  //enable video toggle btn
-//  helper.toggleVideoBtnDisabled(false)
-
-
-  try {
-       await new Promise((res, rej) => {
-         // eslint-disable-next-line no-unused-expressions
-         screen.getTracks().length ? screen.getTracks().forEach(track => track.stop()) : '';
-         res();
-       });
-       setStopVideo()
-       setdisplayStream(false);
-       broadcastNewTracks(stream, 'video');
-     } catch (e) {
-       console.error(e);
-     }
-}
-
-
-  function broadcastNewTracks( stream, type, mirrorMode = true ) {
-    helper.setLocalStream(userVideo.current, stream, mirrorMode );
-    let track = type === 'audio' ? stream.getAudioTracks()[0] : stream.getVideoTracks()[0];
-    for ( let p in peersRef.current ) {
-        let peer = peersRef.current[p].peer
-
-        if ( typeof peer == 'object' ) {
-            helper.replaceTrack(track, peer);
-        }
-       
+    try {
+      await new Promise((res, rej) => {
+        // eslint-disable-next-line no-unused-expressions
+        screen.getTracks().length
+          ? screen.getTracks().forEach((track) => track.stop())
+          : "";
+        res();
+      });
+      setStopVideo();
+      setdisplayStream(false);
+      broadcastNewTracks(stream, "video");
+    } catch (e) {
+      console.error(e);
     }
-}
+  }
+
+  function broadcastNewTracks(stream, type, mirrorMode = true) {
+    helper.setLocalStream(userVideo.current, stream, mirrorMode);
+    let track =
+      type === "audio"
+        ? stream.getAudioTracks()[0]
+        : stream.getVideoTracks()[0];
+    for (let p in peersRef.current) {
+      let peer = peersRef.current[p].peer;
+
+      if (typeof peer == "object") {
+        helper.replaceTrack(track, peer);
+      }
+    }
+  }
 
   const setMuteButton = () => {
     const html = `
@@ -577,13 +542,16 @@ useEffect(()=> {
   };
 
   const shareStop = () => {
-    if (screen && screen.getVideoTracks().length && screen.getVideoTracks()[0].readyState !== 'ended' ) {
+    if (
+      screen &&
+      screen.getVideoTracks().length &&
+      screen.getVideoTracks()[0].readyState !== "ended"
+    ) {
       stopSharingScreen();
-  }
-  else {
+    } else {
       shareScreen();
-  }
-  }
+    }
+  };
 
   const setPlayVideo = () => {
     const html = `
@@ -592,8 +560,9 @@ useEffect(()=> {
         `;
     main__video_button.current.innerHTML = html;
   };
-  const classes = useStyles();
-  if (stream) peersRef.current.length > 0 || errorMessage ? music.pause() : music.play();
+
+  if (stream)
+    peersRef.current.length > 0 || errorMessage ? music.pause() : music.play();
   let isVideoEnabled =
     userVideo.current?.srcObject?.getVideoTracks()[0]?.enabled;
   return (
@@ -617,7 +586,7 @@ useEffect(()=> {
                 setMessage={setMessage}
                 name={userName}
                 users={users}
-                setIsNewMessage = {setIsNewMessage}
+                setIsNewMessage={setIsNewMessage}
                 displayUser={displayUser}
                 setDisplayUser={setDisplayUser}
               />
@@ -627,8 +596,8 @@ useEffect(()=> {
                 toggleControls={toggleHamburger}
                 users={users}
                 user={userName}
-                displayUser ={displayUser}
-                setDisplayUser = {setDisplayUser}
+                displayUser={displayUser}
+                setDisplayUser={setDisplayUser}
               />
             ) : null}
           </div>
@@ -669,63 +638,28 @@ useEffect(()=> {
             >
               <div className="index--container--uI0r1">
                 <div className="index--body--3G2lS">
+                  <div className="local-video">
+           
+                      {stream && !isVideoEnabled && (
+                        <BackgroundLetterAvatars name={userName} />
+                      )}
+                      <VideoStream
+                        onClick = {() => helper.pictureInPicture()}
+                        id={`myVideo`}
+                        style={{
+                          display: stream && isVideoEnabled ? "block" : "none",
+                          visibility: stream && isVideoEnabled ? 'visible': 'hidden'
+                        }}
+                        muted
+                        ref={userVideo}
+                        autoPlay
+                        playsInline
+                      />
+                   
+            
+                  </div>
+
                   <VideoContainer>
-                    <VideoWrapper>
-                      <VideoCard>
-                        {stream && !isVideoEnabled && (
-                          <BackgroundLetterAvatars name={userName} />
-                        )}
-                        <VideoStream
-                        id = {`myVideo`}
-                          style={{
-                            display:
-                              stream && isVideoEnabled ? "block" : "none",
-                          }}
-                          muted
-                          ref={userVideo}
-                          autoPlay
-                          playsInline
-                        />
-                        {stream && (
-                          <FooterContainer>
-                            <UserNameText>
-                              {userName.toLowerCase()}
-                            </UserNameText>
-                            <div className={classes.controls}>
-                              <div
-                              id = {`playStop`}
-                                className={
-                                  videoFlag
-                                    ? classes.iconsEnabled
-                                    : classes.iconsDisabled
-                                }
-                                onClick={playStop}
-                              >
-                                {videoFlag ? (
-                                  <VideocamIcon className={classes.color} />
-                                ) : (
-                                  <VideocamOffIcon className={classes.color} />
-                                )}
-                              </div>
-                              <div
-                              id = {`muteunmute`}
-                                className={
-                                  audioFlag
-                                    ? classes.iconsEnabled
-                                    : classes.iconsDisabled
-                                }
-                                onClick={muteUnmute}
-                              >
-                                {audioFlag ? (
-                                  <MicIcon className={classes.color} />
-                                ) : (
-                                  <MicOffIcon className={classes.color} />
-                                )}
-                              </div>
-                            </div>
-                          </FooterContainer>
-                        )}
-                      </VideoCard>
 
                       {peersRef.current.map((peer) => {
                         let audioFlagTemp = true;
@@ -748,7 +682,7 @@ useEffect(()=> {
                         }
                         return (
                           <Video
-                          id = {`remote-video-${peer.peerID}`}
+                            id={`remote-video-${peer.peerID}`}
                             key={peer.peerID}
                             peer={peer}
                             audioFlagTemp={audioFlagTemp}
@@ -759,7 +693,6 @@ useEffect(()=> {
                           />
                         );
                       })}
-                    </VideoWrapper>
                   </VideoContainer>
                 </div>
                 <span className="footer-link--footer-link--3EuAW">
@@ -767,21 +700,20 @@ useEffect(()=> {
                     <MainControls
                       toggleHamburger={toggleHamburger}
                       setSelected={setSelected}
-                      selected = {selected}
-                      isNewMessage = {isNewMessage}
-                      setIsNewMessage = {setIsNewMessage}
+                      selected={selected}
+                      isNewMessage={isNewMessage}
+                      setIsNewMessage={setIsNewMessage}
                       setCopyInfo={setCopyInfo}
                       playStop={playStop}
                       muteUnmute={muteUnmute}
                       leaveCall={leaveCall}
                       main__mute_button={main__mute_button}
                       main__video_button={main__video_button}
-                      shareStop = {shareStop}
-                      isShareToggled = {displayStream}
+                      shareStop={shareStop}
+                      isShareToggled={displayStream}
                       stream={stream}
                       users={users}
-                      host = {host ? host :  null}
-
+                      host={host ? host : null}
                     />
                   </div>
                 </span>

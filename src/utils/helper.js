@@ -67,24 +67,10 @@ toggleVideoBtnDisabled( disabled ) {
     document.getElementById( 'playstop' ).disabled = disabled;
 },
 
-toggleShareIcons( share ) {
-    let shareIconElem = document.querySelector( '#share-screen' );
 
-    if ( share ) {
-        shareIconElem.setAttribute( 'title', 'Stop sharing screen' );
-        shareIconElem.children[0].classList.add( 'text-primary' );
-        shareIconElem.children[0].classList.remove( 'text-white' );
-    }
 
-    else {
-        shareIconElem.setAttribute( 'title', 'Share screen' );
-        shareIconElem.children[0].classList.add( 'text-white' );
-        shareIconElem.children[0].classList.remove( 'text-primary' );
-    }
-},
-
-maximiseStream( e ) {
-    let elem = e.target.parentElement.previousElementSibling;
+maximiseStream( id ) {
+    let elem = document.getElementById(id);
 
     elem.requestFullscreen() || elem.mozRequestFullScreen() || elem.webkitRequestFullscreen() || elem.msRequestFullscreen();
 },
@@ -102,10 +88,12 @@ setLocalStream(localVidElem, stream, mirrorMode = true ) {
 //     // saveAs( file );
 // },
 
-adjustVideoElemSize() {
-    let elem = document.getElementsByClassName( 'card' );
+adjustVideoElemSize(isLaptop) {
+    
+    let elem = document.getElementsByClassName('remote-video-card');
     let totalRemoteVideosDesktop = elem.length;
-    let newWidth = totalRemoteVideosDesktop <= 2 ? '50%' : (
+    let newWidth = totalRemoteVideosDesktop === 1 && !isLaptop ? '100%' : (
+        totalRemoteVideosDesktop <= 2 ? '50%' : (
         // eslint-disable-next-line eqeqeq
         totalRemoteVideosDesktop == 3 ? '33.33%' : (
             totalRemoteVideosDesktop <= 8 ? '25%' : (
@@ -118,6 +106,7 @@ adjustVideoElemSize() {
                 )
             )
         )
+        )
     );
 
 
@@ -126,5 +115,21 @@ adjustVideoElemSize() {
     }
 },
 
+pictureInPicture(){
+    if ( !document.pictureInPictureElement ) {
+        document.getElementById( 'myVideo' ).requestPictureInPicture()
+            .catch( error => {
+                // Video failed to enter Picture-in-Picture mode.
+                console.error( error );
+            } );
+    }
+    else {
+        document.exitPictureInPicture()
+            .catch( error => {
+                // Video failed to leave Picture-in-Picture mode.
+                console.error( error );
+            } ); 
+}
+}
 
 }
