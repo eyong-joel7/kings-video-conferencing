@@ -142,3 +142,8 @@ color: #15c26b !important;
   position: fixed;
   width:15vw;
 }
+@media screen and (max-width: 900px){
+  .local-video {
+    max-width: 200px;
+  }
+}

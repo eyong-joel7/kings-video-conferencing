@@ -30,9 +30,8 @@ export const VideoCard = styled.div`
 `;
 
 export const VideoStream = styled.video`
-  height: 100%;
-  width: 100%;
 `;
+
 export const FooterContainer = styled.footer`
 display:flex;
 height:50px;
