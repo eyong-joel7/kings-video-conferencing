@@ -116,7 +116,9 @@ adjustVideoElemSize(isLaptop) {
 },
 
 pictureInPicture(){
+    // const myVideo  = document.getElementById('myVideo');
     if ( !document.pictureInPictureElement ) {
+        // myVideo.style.visibility = 'hidden'
         document.getElementById( 'myVideo' ).requestPictureInPicture()
             .catch( error => {
                 // Video failed to enter Picture-in-Picture mode.

@@ -140,10 +140,13 @@ color: #15c26b !important;
   bottom: 5rem;
   left: 0;
   position: fixed;
+  z-index: 1000;
+}
+#myVideo {
   width:15vw;
 }
-@media screen and (max-width: 900px){
-  .local-video {
-    max-width: 200px;
+@media screen and (max-width: 800px){
+  #myVideo {
+    width: 150px;
   }
 }

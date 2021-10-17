@@ -11,7 +11,19 @@ export const VideoContainer = styled.div`
     display: flex;
 `;
 
-
+export const VideoWrapper = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(25vw, 1fr));
+  justify-items: center;
+  /* height: 100%;
+  width: 100%; */
+  @media screen and (max-width: 1000px) {
+    grid-template-columns: 1fr 1fr;
+  }
+  @media screen and (max-width: 768px) {
+    grid-template-columns: 1fr;
+  } ;
+`;
 
 export const VideoCard = styled.div`
   display: flex;
