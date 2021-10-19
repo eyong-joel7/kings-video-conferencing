@@ -5,9 +5,7 @@ export const VideoContainer = styled.div`
     width: 100vw;
     margin-right: auto;
     margin-left: auto;
-    /* padding-right: 15px;
-    padding-left: 15px; */
-    max-height: calc(100vh - 8rem);
+     height: calc(100vh - 8rem);
     justify-content: center;
     display: flex;
     overflow:hidden;
@@ -16,17 +14,18 @@ export const VideoContainer = styled.div`
 export const VideoWrapper = styled.div`
   display: grid;
    max-height: 100%;
-   max-width: 100%;
-  grid-template-columns: repeat(auto-fit, minmax(50vw, 90vw));
-  grid-template-rows: repeat(auto-fit, minmax(40vh, calc(100vh - 8rem)));
+   width: 100%;
+   padding: 10px;
+   grid-gap: 5%;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
   justify-items: center;
   overflow:hidden;
  
-  @media screen and (max-width: 1000px) {
-    grid-template-columns: repeat(auto-fit, minmax(50vw, 90vw));
-    grid-template-rows: repeat(auto-fit, minmax(40vh, calc(100vh - 8rem)));
-   
-  }
+  /* @media screen and (max-width: 1000px) {
+    grid-template-columns: repeat(auto-fit, minmax(40%, 100%));
+    grid-template-rows: repeat(auto-fit, minmax(50%, calc(100vh - 8rem)));
+  } */
 `;
 
 export const VideoCard = styled.div`
@@ -34,12 +33,12 @@ export const VideoCard = styled.div`
   flex-direction: column;
   max-width:100%;
   justify-content: flex-start;
-  align-items: center;
+  align-items: center; 
   border-radius: 5px;
-  max-height: 100%;
-  padding: 20px;
+ height:50%;
+  padding:0;
   margin:0;
-  /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5); */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
   transition: all 0.2s ease-in-out;
   &:hover {
     transform: scale(1.01);
@@ -61,7 +60,7 @@ max-height:50px;
 flex-wrap:nowrap;
 align-items: center;
 padding: 5px;
-width: 80%;
+width: 100%;
 justify-content: center;
 `;
 
