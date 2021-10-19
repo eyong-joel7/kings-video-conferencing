@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
 import Peer from "simple-peer";
-
+import Draggable from "react-draggable";
 import { useHistory, useLocation } from "react-router";
 import { useMediaQuery } from "react-responsive";
 import MainControls from "../MainControls";
@@ -20,6 +20,7 @@ import {
 import {
   VideoContainer,
   VideoStream,
+  VideoWrapper,
 } from "./conferenceRoomElements";
 import LoadingBackdrop from "../LoadingBackdrop";
 import Video from "./VideoPlayer";
@@ -162,7 +163,7 @@ const ConferenceRoom = (props) => {
             });
           });
           setPeers(peers);
-          helper.adjustVideoElemSize(isDesktop);
+          // helper.adjustVideoElemSize(isDesktop);
         });
 
         socketRef.current.on("user joined", (payload) => {
@@ -179,7 +180,7 @@ const ConferenceRoom = (props) => {
             peerUsername: payload.userName,
           };
           setPeers((users) => [...users, peerObj]);
-          helper.adjustVideoElemSize(isDesktop);
+          // helper.adjustVideoElemSize(isDesktop);
         });
 
         socketRef.current.on("receiving returned signal", (payload) => {
@@ -193,7 +194,7 @@ const ConferenceRoom = (props) => {
             const peers = peersRef.current.filter((p) => p.peerID !== id);
             peersRef.current = peers;
             setPeers(peers);
-            helper.adjustVideoElemSize(isDesktop);
+            // helper.adjustVideoElemSize(isDesktop);
           }
         });
         socketRef.current.on("message", (message) => {
@@ -560,13 +561,19 @@ const ConferenceRoom = (props) => {
         `;
     main__video_button.current.innerHTML = html;
   };
+  //  const onStart = () => {
+  //     this.setState({activeDrags: ++this.state.activeDrags});
+  //   };
 
+  //  const onStop = () => {
+  //     this.setState({activeDrags: --this.state.activeDrags});
+  //   };
   if (stream)
     peersRef.current.length > 0 || errorMessage ? music.pause() : music.play();
   let isVideoEnabled =
     userVideo.current?.srcObject?.getVideoTracks()[0]?.enabled;
   return (
-    <div>
+    <>
       <div className="conference video_app__container">
         <nav
           className={
@@ -636,89 +643,83 @@ const ConferenceRoom = (props) => {
               className="video_app__body"
               onClick={() => closeNav()}
             >
-              <div className="index--container--uI0r1">
-                <div className="index--body--3G2lS">
-                  <div className="local-video">
-           
-                      {stream && !isVideoEnabled && (
-                        <BackgroundLetterAvatars name={userName} />
-                      )}
-                      <VideoStream
-                        onClick = {() => helper.pictureInPicture()}
-                        id={`myVideo`}
-                        style={{
-                          display: stream && isVideoEnabled ? "block" : "none",
-                          visibility: stream && isVideoEnabled ? 'visible': 'hidden'
-                        }}
-                        muted
-                        ref={userVideo}
-                        autoPlay
-                        playsInline
-                      />
-                   
-            
-                  </div>
-
-                  <VideoContainer>
-                   
-
-                      {peersRef.current.map((peer) => {
-                        let audioFlagTemp = true;
-                        let videoFlagTemp = true;
-                        const user = users.find(
-                          (user) =>
-                            user.name.toLowerCase() === userName.toLowerCase()
-                        );
-                        if (userUpdate) {
-                          userUpdate.forEach((entry) => {
-                            if (
-                              peer &&
-                              peer.peerID &&
-                              peer.peerID === entry.id
-                            ) {
-                              audioFlagTemp = entry.audioFlag;
-                              videoFlagTemp = entry.videoFlag;
-                            }
-                          });
-                        }
-                        return (
-                          <Video
-                            id={`remote-video-${peer.peerID}`}
-                            key={peer.peerID}
-                            peer={peer}
-                            audioFlagTemp={audioFlagTemp}
-                            videoFlagTemp={videoFlagTemp}
-                            userUpdate={userUpdate}
-                            socketRef={socketRef}
-                            user={user}
-                          />
-                        );
-                      })}
-                  </VideoContainer>
+              <Draggable>
+                <div className="local-video">
+                  {stream && !isVideoEnabled && (
+                    <BackgroundLetterAvatars name={userName} />
+                  )}
+                  <VideoStream
+                    mirrorMode={"1"}
+                    id={`myVideo`}
+                    style={{
+                      display: stream && isVideoEnabled ? "block" : "none",
+                      visibility:
+                        stream && isVideoEnabled ? "visible" : "hidden",
+                    }}
+                    muted
+                    ref={userVideo}
+                    autoPlay
+                    playsInline
+                  />
                 </div>
-                <span className="footer-link--footer-link--3EuAW">
-                  <div className="footer-link--contents--1AXQE shared--outer-container--3eppq">
-                    <MainControls
-                      toggleHamburger={toggleHamburger}
-                      setSelected={setSelected}
-                      selected={selected}
-                      isNewMessage={isNewMessage}
-                      setIsNewMessage={setIsNewMessage}
-                      setCopyInfo={setCopyInfo}
-                      playStop={playStop}
-                      muteUnmute={muteUnmute}
-                      leaveCall={leaveCall}
-                      main__mute_button={main__mute_button}
-                      main__video_button={main__video_button}
-                      shareStop={shareStop}
-                      isShareToggled={displayStream}
-                      stream={stream}
-                      users={users}
-                      host={host ? host : null}
-                    />
-                  </div>
-                </span>
-              </div>
+              </Draggable>
+
+              <VideoContainer>
+                <VideoWrapper>
+                  {peersRef.current.map((peer) => {
+                    let audioFlagTemp = true;
+                    let videoFlagTemp = true;
+                    const user = users.find(
+                      (user) =>
+                        user.name.toLowerCase() === userName.toLowerCase()
+                    );
+                    if (userUpdate) {
+                      userUpdate.forEach((entry) => {
+                        if (peer && peer.peerID && peer.peerID === entry.id) {
+                          audioFlagTemp = entry.audioFlag;
+                          videoFlagTemp = entry.videoFlag;
+                        }
+                      });
+                    }
+                    return (
+                      <Video
+                        id={`remote-video-${peer.peerID}`}
+                        key={peer.peerID}
+                        peer={peer}
+                        audioFlagTemp={audioFlagTemp}
+                        videoFlagTemp={videoFlagTemp}
+                        userUpdate={userUpdate}
+                        socketRef={socketRef}
+                        user={user}
+                      />
+                    );
+                  })}
+                </VideoWrapper>
+              </VideoContainer>
+            </div>
+            <div>
+              <span className="footer-link--footer-link--3EuAW">
+                <div className="footer-link--contents--1AXQE shared--outer-container--3eppq">
+                  <MainControls
+                    toggleHamburger={toggleHamburger}
+                    setSelected={setSelected}
+                    selected={selected}
+                    isNewMessage={isNewMessage}
+                    setIsNewMessage={setIsNewMessage}
+                    setCopyInfo={setCopyInfo}
+                    playStop={playStop}
+                    muteUnmute={muteUnmute}
+                    leaveCall={leaveCall}
+                    main__mute_button={main__mute_button}
+                    main__video_button={main__video_button}
+                    shareStop={shareStop}
+                    isShareToggled={displayStream}
+                    stream={stream}
+                    users={users}
+                    host={host ? host : null}
+                  />
+                </div>
+              </span>
             </div>
           </div>
         </main>
@@ -741,7 +742,7 @@ const ConferenceRoom = (props) => {
       )}
       <LoadingBackdrop open={open} />
       <AudioPlayer />
-    </div>
+    </>
   );
 };
 

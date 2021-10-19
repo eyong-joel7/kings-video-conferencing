@@ -63,7 +63,8 @@ const Video = (props) => {
     }
   };
   return (
-    <VideoCard className = 'remote-video-card'>
+    // className = 'remote-video-card'
+    <VideoCard >
       <VideoStream
         id={props.id}
         style={{ display: props.videoFlagTemp ? "block" : "none" }}

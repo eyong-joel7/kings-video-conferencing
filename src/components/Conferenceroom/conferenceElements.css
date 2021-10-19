@@ -42,10 +42,8 @@ background-color: transparent;
 .conference .video_app__body{
     height: 100%;
     width: 100%;
-    /* margin-top: 3rem; */
-    margin-bottom: 5rem;
-    padding: 20px 0;
-    overflow-x: hidden;
-    overflow-y: auto;
+    top: 3rem;
+    height: calc(100vh - 8rem);
+   overflow: hidden;
     
 }

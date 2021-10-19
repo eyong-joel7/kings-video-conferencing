@@ -1,40 +1,45 @@
 import styled from "styled-components";
 
 export const VideoContainer = styled.div`
-  width: 100%;
+    box-sizing:border-box;
+    width: 100vw;
     margin-right: auto;
     margin-left: auto;
-    padding-right: 15px;
-    padding-left: 15px;
-    height: 85vh;
+    /* padding-right: 15px;
+    padding-left: 15px; */
+    /* height: 85vh; */
     justify-content: center;
     display: flex;
+    overflow:hidden;
+    max-height:100%;
 `;
 
 export const VideoWrapper = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(25vw, 1fr));
+   max-height: 100%;
+  width: 100%;
+  grid-template-columns: repeat(auto-fit, minmax(50vw, 1fr));
+  grid-template-rows: repeat(auto-fit, minmax(50vw, 1fr));
   justify-items: center;
-  /* height: 100%;
-  width: 100%; */
+  overflow:hidden;
+ 
   @media screen and (max-width: 1000px) {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(50vw, 1fr));
+    grid-template-rows: repeat(auto-fit, minmax(50vw, 1fr));
   }
-  @media screen and (max-width: 768px) {
-    grid-template-columns: 1fr;
-  } ;
 `;
 
 export const VideoCard = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  width:100%;
+  justify-content: space-between;
   align-items: center;
   border-radius: 5px;
   height: 100%;
-  padding: 0;
+  padding: 20px;
   margin:0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5); */
   transition: all 0.2s ease-in-out;
   &:hover {
     transform: scale(1.01);
@@ -42,16 +47,22 @@ export const VideoCard = styled.div`
 `;
 
 export const VideoStream = styled.video`
+   max-height: 100%;
+   max-width:95%;
+  -ms-transform:${({mirrorMode}) => mirrorMode ? 'scaleX(-1)': null};
+  -moz-transform: ${({mirrorMode}) => mirrorMode ? 'scaleX(-1)': null};
+  -webkit-transform: ${({mirrorMode}) => mirrorMode ? 'scaleX(-1)': null};
+  transform: ${({mirrorMode}) => mirrorMode ? 'scaleX(-1)': null};
 `;
 
-export const FooterContainer = styled.footer`
+export const FooterContainer = styled.div`
 display:flex;
-height:50px;
+max-height:50px;
 flex-wrap:nowrap;
 align-items: center;
 padding: 5px;
-width: 100%;
-justify-content: space-between;
+width: 80%;
+justify-content: center;
 `;
 
 
