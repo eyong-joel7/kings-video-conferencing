@@ -7,36 +7,36 @@ export const VideoContainer = styled.div`
     margin-left: auto;
     /* padding-right: 15px;
     padding-left: 15px; */
-    /* height: 85vh; */
+    max-height: calc(100vh - 8rem);
     justify-content: center;
     display: flex;
     overflow:hidden;
-    max-height:100%;
 `;
 
 export const VideoWrapper = styled.div`
   display: grid;
    max-height: 100%;
-  width: 100%;
-  grid-template-columns: repeat(auto-fit, minmax(50vw, 1fr));
-  grid-template-rows: repeat(auto-fit, minmax(50vw, 1fr));
+   max-width: 100%;
+  grid-template-columns: repeat(auto-fit, minmax(50vw, 90vw));
+  grid-template-rows: repeat(auto-fit, minmax(40vh, calc(100vh - 8rem)));
   justify-items: center;
   overflow:hidden;
  
   @media screen and (max-width: 1000px) {
-    grid-template-columns: repeat(auto-fit, minmax(50vw, 1fr));
-    grid-template-rows: repeat(auto-fit, minmax(50vw, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(50vw, 90vw));
+    grid-template-rows: repeat(auto-fit, minmax(40vh, calc(100vh - 8rem)));
+   
   }
 `;
 
 export const VideoCard = styled.div`
   display: flex;
   flex-direction: column;
-  width:100%;
-  justify-content: space-between;
+  max-width:100%;
+  justify-content: flex-start;
   align-items: center;
   border-radius: 5px;
-  height: 100%;
+  max-height: 100%;
   padding: 20px;
   margin:0;
   /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5); */
@@ -47,8 +47,8 @@ export const VideoCard = styled.div`
 `;
 
 export const VideoStream = styled.video`
-   max-height: 100%;
-   max-width:95%;
+   max-height: calc(100% - 50px);
+   max-width:100%;
   -ms-transform:${({mirrorMode}) => mirrorMode ? 'scaleX(-1)': null};
   -moz-transform: ${({mirrorMode}) => mirrorMode ? 'scaleX(-1)': null};
   -webkit-transform: ${({mirrorMode}) => mirrorMode ? 'scaleX(-1)': null};

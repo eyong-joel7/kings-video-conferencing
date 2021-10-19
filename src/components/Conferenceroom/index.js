@@ -81,9 +81,9 @@ const ConferenceRoom = (props) => {
   const hiddenClass = useMediaQuery({
     query: "(min-device-width: 1200px)",
   });
-  const isDesktop = useMediaQuery({
-    query: "(min-device-width: 768px)",
-  });
+  // const isDesktop = useMediaQuery({
+  //   query: "(min-device-width: 768px)",
+  // });
   const toggleHamburger = () => {
     setIsToggled(!isToggled);
     setSelected("");
@@ -311,15 +311,7 @@ const ConferenceRoom = (props) => {
       localStorage.getItem(RECENT_ACTIVITIES)
     );
     const today = new Date();
-    const date =
-      today.getFullYear() +
-      "-" +
-      (today.getMonth() + 1) +
-      "-" +
-      today.getDate();
-    const time =
-      today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-    const dateTime = date + " " + time;
+    const dateTime = helper.formatDate(today)
     const newActivity = {
       meetingID: roomID,
       dateTime: dateTime,
@@ -561,13 +553,7 @@ const ConferenceRoom = (props) => {
         `;
     main__video_button.current.innerHTML = html;
   };
-  //  const onStart = () => {
-  //     this.setState({activeDrags: ++this.state.activeDrags});
-  //   };
 
-  //  const onStop = () => {
-  //     this.setState({activeDrags: --this.state.activeDrags});
-  //   };
   if (stream)
     peersRef.current.length > 0 || errorMessage ? music.pause() : music.play();
   let isVideoEnabled =
@@ -649,7 +635,7 @@ const ConferenceRoom = (props) => {
                     <BackgroundLetterAvatars name={userName} />
                   )}
                   <VideoStream
-                    mirrorMode={"1"}
+                    mirrorMode={screen ? '0' : '1'}
                     id={`myVideo`}
                     style={{
                       display: stream && isVideoEnabled ? "block" : "none",
