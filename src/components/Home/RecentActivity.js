@@ -14,6 +14,7 @@ import Typography from '@material-ui/core/Typography';
 import { ExitToApp, Info} from '@material-ui/icons';
 import { Divider } from '@material-ui/core';
 import { useHistory } from 'react-router';
+import helper from "../../utils/helper";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -49,7 +50,11 @@ marginLeft: 10,
 export default function RecentActivity({recentActivitiesList}) {
   const classes = useStyles();
 const history = useHistory();
+
+const sortArr = arr => arr.sort((a,b) => b.dateTime - a.dateTime)
+
   return (
+
     <div className={classes.root} >
     
       <Grid container spacing={2}>
@@ -63,8 +68,9 @@ const history = useHistory();
           <Divider/>
           <div className={classes.demo}>
             <List dense= {true}>
-               { recentActivitiesList?.length > 0 ?(recentActivitiesList.sort((a,b) => -1).map(activity => (
-                <ListItem key = {activity.dateTime} >
+               { recentActivitiesList?.length > 0 ?(sortArr(recentActivitiesList).map(activity => (
+             
+               <ListItem key = {activity.dateTime} >
                 <ListItemAvatar onClick = {() => history.push({pathname: `/conference-room/${activity.meetingID}`, state: {host:activity.host}})}>
                   <Avatar>
                    <Info/>
@@ -72,7 +78,7 @@ const history = useHistory();
                 </ListItemAvatar>
                 <ListItemText
                   primary={activity.meetingID}
-                  secondary= {activity.dateTime}
+                  secondary= {helper.formatDate(activity.dateTime)}
                 />
                 <ListItemSecondaryAction  onClick = {() => history.push(`/conference-room/${activity.meetingID}`)}>
                   <IconButton edge="end" aria-label="delete">

@@ -310,11 +310,11 @@ const ConferenceRoom = (props) => {
     const storedActivityList = JSON.parse(
       localStorage.getItem(RECENT_ACTIVITIES)
     );
-    const today = new Date();
-    const dateTime = helper.formatDate(today)
+    const today = Date.now();
+  //  const dateTime = helper.formatDate(today)
     const newActivity = {
       meetingID: roomID,
-      dateTime: dateTime,
+      dateTime: today,
       host: host,
     };
     if (storedActivityList) {
@@ -325,7 +325,7 @@ const ConferenceRoom = (props) => {
         newList = storedActivityList.map((listItem) =>
           listItem.meetingID !== roomID
             ? listItem
-            : Object.assign({}, listItem, { dateTime: dateTime })
+            : Object.assign({}, listItem, { dateTime: today })
         );
         localStorage.setItem(RECENT_ACTIVITIES, JSON.stringify(newList));
       } else {
